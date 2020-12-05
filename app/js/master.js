@@ -111,7 +111,7 @@ var app = new Vue({
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
       },
-      showTable: true,
+      showTable: false,
       listaDeMateriales: [
         {
           // NUEVAS VARIABLES
@@ -191,6 +191,32 @@ var app = new Vue({
     };
   },
   methods: {
+    updateTesty() {
+      ZOHO.CREATOR.init().then((data) => {
+        formData = {
+          Testy_Report: [
+            {
+              textito: "inicial",
+              ID: "3405770000000410003",
+              fechita: "04-Dec-2020",
+            },
+          ],
+        };
+
+        var config = {
+          reportname: "Testy_Report",
+          id: "3405770000000410003",
+          data: formData,
+        };
+
+        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+          if (response.code == 3000) {
+            console.log("Record updated successfully");
+          }
+        });
+      });
+    },
+
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
       elementoMO = this.listaDeMateriales[this.listaDeMateriales.length - 1];
@@ -358,66 +384,69 @@ var app = new Vue({
 
     updateField() {
       formData = {
-        DETALLES_NUMERO_PAGINAS: `${this.datosInternos.DETALLES_NUMERO_PAGINAS}`,
-        COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS}`,
-        ID_DATOS_COTIZADOR_REPORT: `${this.datosInternos.ID_DATOS_COTIZADOR_REPORT}`,
-        COTIZACION_INTERNA_UTILIDAD: `${this.datosInternos.COTIZACION_INTERNA_UTILIDAD}`,
-        DETALLES_TOTAL_COTA_MAYOR: `${this.datosInternos.DETALLES_TOTAL_COTA_MAYOR}`,
-        DETALLES_TOTAL_COTIZACION: `${this.datosInternos.DETALLES_TOTAL_COTIZACION}`,
-        ID: "3405770000000314030",
-        DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
-        DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
-        COTIZACION_INTERNA_MANO_OBRA: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA}`,
-        DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
-        ID_COTIZACION: "testing daniel anixter",
-        DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
-        DETALLES_NUMERO_PARTIDAS: `${this.datosInternos.DETALLES_NUMERO_PARTIDAS}`,
-        DETALLES_PROYECTO: `${this.datosInternos.DETALLES_PROYECTO}`,
-        DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
-        DETALLES_NOMBRE_COTIZACION: `${this.datosInternos.DETALLES_NOMBRE_COTIZACION}`,
-        DETALLES_TIPO_MONEDA: "Dólares",
-        COTIZACION_INTERNA_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_INDIRECTOS}`,
-        COTIZACION_INTERNA_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MATERIALES}`,
-        COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}`,
-        COTIZACION_INTERNA_PV_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_PV_GLOBAL}`,
-        COTIZACION_INTERNA_COSTO_GLOBAL: `${this.datosInternos.COTIZACION}`,
-        COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
-        DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
-        DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
-        DETALLES_LUGAR_ENTREGA: `${this.datosInternos.DETALLES_LUGAR_ENTREGA}`,
-        COTIZACION_INTERNA_TOTAL: `${this.datosInternos.COTIZACION_INTERNA_TOTAL}`,
-        UTILIDAD_PORCENTAJE: `${this.datosInternos.UTILIDAD_PORCENTAJE}`,
-        IMPORTE_MO: `${this.datosInternos.IMPORTE_MO}`,
-        INDIRECTOS_USD: `${this.datosInternos.INDIRECTOS_USD}`,
-        CUANTOS_SUPERVISOR: `${this.datosInternos.CUANTOS_SUPERVISOR}`,
-        CUANTOS_TECNICO: `${this.datosInternos.CUANTOS_TECNICO}`,
-        DIARIO_UNI_SUPERVISOR: `${this.datosInternos.DIARIO_UNI_SUPERVISOR}`,
-        DIARIO_UNI_TECNICO: `${this.datosInternos.DIARIO_UNI_TECNICO}`,
-        MES_UNI_SUPERVISOR: `${this.datosInternos.MES_UNI_SUPERVISOR}`,
-        MES_UNI_TECNICO: `${this.datosInternos.MES_UNI_TECNICO}`,
-        TOTAL_COSTO_DIARIO_SUPERVISOR: `${this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR}`,
-        TOTAL_COSTO_DIARIO_TECNICO: `${this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO}`,
-        TOTAL_COSTO_AMBOS: `${this.datosInternos.TOTAL_COSTO_AMBOS}`,
-        MO_FLAT_MXN: `${this.datosInternos.MO_FLAT_MXN}`,
-        MO_CON_IMPUESTOS: `${this.datosInternos.MO_CON_IMPUESTOS}`,
-        MO: `${this.datosInternos.MO}`,
-        MO_CON_MARGEN: `${this.datosInternos.MO_CON_MARGEN}`,
-        MO_CON_MARGEN_MXN: `${this.datosInternos.MO_CON_MARGEN_MXN}`,
-        VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
-        VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
-        VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
-        VARIABLE_INDIRECTA_NUM_VUELTA: `${this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA}`,
-        VARIABLE_INDIRECTA_PRECIO_GASOLINA: `${this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA}`,
-        VARIABLE_INDIRECTA_HERRAMIENTAS: `${this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS}`,
-        VARIABLE_INDIRECTA_SCANNER: `${this.datosInternos.VARIABLE_INDIRECTA_SCANNER}`,
-        VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
-        VARIABLE_INDIRECTA_USO_VEHICULO: `${this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO}`,
-        VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
+        data: {
+          DETALLES_NUMERO_PAGINAS: `${this.datosInternos.DETALLES_NUMERO_PAGINAS}`,
+          COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS}`,
+          ID_DATOS_COTIZADOR_REPORT: `${this.datosInternos.ID_DATOS_COTIZADOR_REPORT}`,
+          COTIZACION_INTERNA_UTILIDAD: `${this.datosInternos.COTIZACION_INTERNA_UTILIDAD}`,
+          DETALLES_TOTAL_COTA_MAYOR: `${this.datosInternos.DETALLES_TOTAL_COTA_MAYOR}`,
+          DETALLES_TOTAL_COTIZACION: `${this.datosInternos.DETALLES_TOTAL_COTIZACION}`,
+          ID: "3405770000000314030",
+          DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
+          DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
+          COTIZACION_INTERNA_MANO_OBRA: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA}`,
+          DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
+          ID_COTIZACION: "testing daniel anixter",
+          DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
+          DETALLES_NUMERO_PARTIDAS: `${this.datosInternos.DETALLES_NUMERO_PARTIDAS}`,
+          DETALLES_PROYECTO: `${this.datosInternos.DETALLES_PROYECTO}`,
+          DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
+          DETALLES_NOMBRE_COTIZACION: `${this.datosInternos.DETALLES_NOMBRE_COTIZACION}`,
+          DETALLES_TIPO_MONEDA: "Dólares",
+          COTIZACION_INTERNA_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_INDIRECTOS}`,
+          COTIZACION_INTERNA_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MATERIALES}`,
+          COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}`,
+          COTIZACION_INTERNA_PV_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_PV_GLOBAL}`,
+          COTIZACION_INTERNA_COSTO_GLOBAL: `${this.datosInternos.COTIZACION}`,
+          COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
+          DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
+          DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
+          DETALLES_LUGAR_ENTREGA: `${this.datosInternos.DETALLES_LUGAR_ENTREGA}`,
+          COTIZACION_INTERNA_TOTAL: `${this.datosInternos.COTIZACION_INTERNA_TOTAL}`,
+          UTILIDAD_PORCENTAJE: `${this.datosInternos.UTILIDAD_PORCENTAJE}`,
+          IMPORTE_MO: `${this.datosInternos.IMPORTE_MO}`,
+          INDIRECTOS_USD: `${this.datosInternos.INDIRECTOS_USD}`,
+          CUANTOS_SUPERVISOR: `${this.datosInternos.CUANTOS_SUPERVISOR}`,
+          CUANTOS_TECNICO: `${this.datosInternos.CUANTOS_TECNICO}`,
+          DIARIO_UNI_SUPERVISOR: `${this.datosInternos.DIARIO_UNI_SUPERVISOR}`,
+          DIARIO_UNI_TECNICO: `${this.datosInternos.DIARIO_UNI_TECNICO}`,
+          MES_UNI_SUPERVISOR: `${this.datosInternos.MES_UNI_SUPERVISOR}`,
+          MES_UNI_TECNICO: `${this.datosInternos.MES_UNI_TECNICO}`,
+          TOTAL_COSTO_DIARIO_SUPERVISOR: `${this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR}`,
+          TOTAL_COSTO_DIARIO_TECNICO: `${this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO}`,
+          TOTAL_COSTO_AMBOS: `${this.datosInternos.TOTAL_COSTO_AMBOS}`,
+          MO_FLAT_MXN: `${this.datosInternos.MO_FLAT_MXN}`,
+          MO_CON_IMPUESTOS: `${this.datosInternos.MO_CON_IMPUESTOS}`,
+          MO: `${this.datosInternos.MO}`,
+          MO_CON_MARGEN: `${this.datosInternos.MO_CON_MARGEN}`,
+          MO_CON_MARGEN_MXN: `${this.datosInternos.MO_CON_MARGEN_MXN}`,
+          VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
+          VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
+          VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
+          VARIABLE_INDIRECTA_NUM_VUELTA: `${this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA}`,
+          VARIABLE_INDIRECTA_PRECIO_GASOLINA: `${this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA}`,
+          VARIABLE_INDIRECTA_HERRAMIENTAS: `${this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS}`,
+          VARIABLE_INDIRECTA_SCANNER: `${this.datosInternos.VARIABLE_INDIRECTA_SCANNER}`,
+          VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
+          VARIABLE_INDIRECTA_USO_VEHICULO: `${this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO}`,
+          VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
+        },
       };
 
       ZOHO.CREATOR.init().then((data) => {
-        config = {
+        var config = {
           reportName: "Datos_Cotizador_Report",
+          // Aqui el error es el id
           id: this.DatosCotizador.ID,
           data: formData,
         };
