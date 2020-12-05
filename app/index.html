@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+</head>
+
+<body>
+  <div id="app">
+    <div style="height: 30em" class="container-fluid">
+      <!-- Boton para obtener tablas de cotizaciones -->
+      <div class="row pt-5">
+        <div class="col-4 d-flex justify-content-center">
+          <button v-show="true" class="btn btn-primary" @click="generaCotizacion">
+            Genera tablas de cotización
+          </button>
+        </div>
+        <div class="col-8">
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+              <img style="height: 6em" src="https://firebasestorage.googleapis.com/v0/b/drntss.appspot.com/o/intega_logo.png?alt=media&token=40cdc5b8-4c78-427a-954d-5556bed09262"
+                alt="integsa-logo" class="img-thumbnail">
+            </a>
+            <div class="collapse navbar-collapse">
+              <div class="navbar-nav">
+                <a @click="page = 1" class="nav-link" :class="{ 'active' : page == 1}" href="#">Formato de Revisión</a>
+                <a @click="page = 2" class="nav-link" :class="{ 'active' : page == 2}" href="#">Cota Mayor</a>
+                <a @click="page = 3" class="nav-link" :class="{ 'active' : page == 3}" href="#">Mano de obra</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- FORMATO DE REVISION -->
+        <div v-if="page == 1" class="col-12">
+          <div class="container-fluid">
+            <!-- Tabla de fechas -->
+            <div class="row pt-5 ">
+              <div class="col-8 ">
+                <table v-if="showTable" class="table table-bordered table-sm small ">
+                  <thead>
+                    <tr>
+                      <th scope="col">FECHA</th>
+                      <th scope="col">{{datosInternos.DETALLES_FECHA}}</th>
+                      <th scope="col">INDIRECTOS</th>
+                      <th scope="col">
+                        ${{variablesIndirectas.total_indirectos_usd}}
+                      </th>
+                      <th scope="col">${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS}}
+                      </th>
+                      <th scope="col"> MO vs Indirectos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">PROYECTO</th>
+                      <td>{{datosInternos.DETALLES_PROYECTO}}</td>
+                      <td>MATERIALES</td>
+                      <td>${{datosInternos.COTIZACION_INTERNA_MATERIALES}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">COTIZACIÓN #</th>
+                      <td>{{datosInternos.DETALLES_NOMBRE_COTIZACION}}</td>
+                      <td>MANO DE OBRA</td>
+                      <td>${{datosInternos.MO_CON_MARGEN_MXN }}</td>
+                      <td>${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES }}</td>
+                      <td>MO vs Mat.</td>
+                    </tr>
+                    <tr>
+                      <th scope="row"></th>
+                      <td colspan="2"></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tablas de datos -->
+            <div class="row pt-5">
+              <div class="col-6">
+                <table v-if="showTable" class="table table-bordered table-sm small ">
+                  <thead>
+                    <tr>
+                      <th scope="col">EMPRESA</th>
+                      <th scope="col">
+                        <input v-model="datosInternos.DETALLES_EMPRESA" class="form-control" type="text"
+                          :value="datosInternos.DETALLES_EMPRESA">
+                      </th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col">Tipo de moneda</th>
+                      <th scope="col">{{datosInternos.DETALLES_TIPO_MONEDA  }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Atención</th>
+                      <td>
+                        {{datosInternos.DETALLES_ATENCION}}
+                      </td>
+                      <td></td>
+                      <td></td>
+                      <td>Tiempo de entrega</td>
+                      <td>
+                        {{datosInternos.DETALLES_TIEMPO_ENTREGA}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Puesto</th>
+                      <td>
+                        {{datosInternos.DETALLES_PUESTO}}
+                      </td>
+                      <td></td>
+                      <td></td>
+                      <td>Lugar de entrega</td>
+                      <td>
+                        {{datosInternos.DETALLES_LUGAR_ENTREGA}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Telefono</th>
+                      <td colspan="2">
+                        <input type="text" v-model="datosInternos.DETALLES_TELEFONOS" class="form-control"
+                          value="datosInternos.DETALLES_TELEFONOS" name="datosInternos.DETALLES_TELEFONOS" >
+                      </td>
+                      <td></td>
+                      <td>Num. de partidas</td>
+                      <td>{{datosInternos.DETALLES_NUMERO_PARTIDAS}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Fax</th>
+                      <td colspan="2">
+                        <input class="form-control" type="text" v-model="datosInternos.DETALLES_FAX" value="datosInternos.DETALLES_FAX"
+                          name="datosInternos.DETALLES_FAX" >
+                      </td>
+                      <td></td>
+                      <td>Num. de páginas</td>
+                      <td>{{datosInternos.DETALLES_NUMERO_PAGINAS}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-4">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-6">
+                      <p class="h3">Porcentaje de utilidad</p>
+                    </div>
+                    <div class="col-6">
+                      <p class="h4"> {{datosInternos.UTILIDAD_PORCENTAJE}} %</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row ">
+              <div class="col-12 ">
+                <table v-if="showTable" class="table small  ">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col">{{datosInternos.DETALLES_NOMBRE_COTIZACION}}</th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col">CAMPO_MARGEN-GLOBAL</th>
+                      <th class="table-warning" class="form-control" style="width: 4em;" type="number"
+                      :class="{ 'table-warning' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL > 25, 'table-danger' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL <= 24 }" scope="col">
+                        <input @change="setMargenGlobal" style="width: 4em;"  
+                          v-model="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
+                          value="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
+                          >
+                        <span class="font-weight-bold">%</span> </th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="table-info">Partida</th>
+                      <td class="table-info">Cantidad</td>
+                      <td class="table-info">Unidad</td>
+                      <td class="table-info">Descripción</td>
+                      <td class="table-info">Precio lista</td>
+                      <td class="table-info">Importe</td>
+                      <td class="table-success">COSTO U</td>
+                      <td class="table-success">COSTO TOT</td>
+                      <td class="table-success">MARGEN</td>
+                      <td class="table-success">PV SUGERIDO</td>
+
+                    </tr>
+                    <tr>
+                      <td colspan="4">{{datosInternos.DETALLES_PROYECTO}}</td>
+                    </tr>
+                    <tr v-for="(material, index) in listaDeMateriales" >
+                      <td>{{index + 1}}</th>
+                      <td :class="{'table-danger' : material.cantidad_de_piezas < 1}" >
+                        <input  @change="actualizaEstado" min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" >
+                      </td>
+                      <td>{{material.unidad}}</td>
+                      <td>{{material.descripcion}}</td>
+                      <td>${{material.precio_lista}}</td>
+                      <td>${{material.importe}} </td>
+                      <td>${{material.costo_u}}</th>
+                      <td>${{material.costo_total}}</td>
+                      <td :class="{ 'table-warning' : material.margen_individual > 25, 'table-danger' : material.margen_individual <= 24 }">
+                        <input  class="form-control" style="width: 5em;" @change="actualizaEstado" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
+                          value="material.margen_individual" >
+                        <span class="font-weight-bold">%</span> </td>
+                      <td>${{material.pv_sugerido}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <button @click="updateField" class="btn btn-primary">Guardar</button>
+                        </th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>Total</td>
+                      <td class="table-info">$ {{datosInternos.DETALLES_TOTAL_COTIZACION}}</td>
+                      <td></td>
+                      <td class="table-success">$ {{datosInternos.COTIZACION_INTERNA_TOTAL}}</td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        </th>
+                      <td></td>
+                      <td>Utilidad</td>
+                      <td class="table-success">${{datosInternos.COTIZACION_INTERNA_UTILIDAD}}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <!-- <td class="table-info"> jeje {{datosInternos.COTIZACION_INTERNA_COSTO_GLOBAL}}</td> -->
+                      <td></td>
+                      <td>{{datosInternos.COTIZACION_INTERNA_PV_GLOBAL}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        </th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- COTA MAYOR-->
+        <div v-if="page == 2" class="col-12">
+          <div class="container-fluid">
+            <div class="row pt-5">w
+              <div  class="col-12 ">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr class="table-warning">
+                      <th scope="col">Concepto</th>
+                      <th scope="col">Costo de instalación por Pieza comprada (USD)</th>
+                      <th scope="col">Metro / Pza</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="material in listaDeMateriales"  >
+                      <td>{{material.descripcion}}</td>
+                      <td>$ {{material.costo_instalacion}}</td>
+                      <td>{{material.unidad}}</td>
+                    </tr>
+                    <tr class="table-info" >
+                      <td>Mano de Obra</td>
+                      <td>$ {{datosInternos.DETALLES_TOTAL_COTA_MAYOR}} </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- MANO DE OBRA -->
+        <div v-if="page == 3" class="col-12">
+          <div class="container-fluid">
+            <!-- TABLE FACTORES  -->
+            <div class="row pt-5">
+              <div  class="col-2">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>Dias de trabajo</td>
+                      <td class="table-info" >{{DatosCotizador.Duraci_n_del_proyecto}}</td>
+                    </tr>
+                    <tr>
+                      <td>Impuestos</td>
+                      <td>30%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- TABLA DE PERSONAL  -->
+            <div class="row">
+              <div class="col-6">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">PERSONAL</th>
+                      <th scope="col">CUANTOS</th>
+                      <th scope="col">MES UNI</th>
+                      <th scope="col">DIARIO UNI</th>
+                      <th scope="col">TOT COSTO DIARIO</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Supervisor</td>
+                      <td class="table-info">
+                        <input @change="terceraVistaFlujo" v-model="datosInternos.CUANTOS_SUPERVISOR" type="number" class="form-control" >
+                      </td>
+                      <td>
+                        $ {{datosInternos.MES_UNI_SUPERVISOR}} MXN
+                      </td>
+                      <td  > 
+                        $ {{datosInternos.DIARIO_UNI_SUPERVISOR }}
+                      </td>
+                      <td>$ {{datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR }}</td>
+                    </tr>
+                    <tr>
+                      <td>Técnico</td>
+                      <td class="table-info" >
+                        <input  @change="terceraVistaFlujo" v-model="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
+                      </td>
+                      <td>
+                        $ {{datosInternos.MES_UNI_TECNICO}} MXN
+                      </td>
+                      <td>
+                        $ {{datosInternos.DIARIO_UNI_TECNICO  }}
+                      </td>
+                      <td> $ {{datosInternos.TOTAL_COSTO_DIARIO_TECNICO}}</td>
+                    </tr>
+                    <tr>
+                      <td colspan="4" ></td>
+                      <td>$ {{total_costo_diario_local }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                
+              </div>
+              <div class="col-3">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col">MO FLAT MX</th>
+                      <th scope="col">MO con Impuestos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      
+                      <td>$ {{this.datosInternos.MO_FLAT_MXN }}</td>
+                      <td>$ {{this.datosInternos.MO_CON_IMPUESTOS }}</td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- TABLA DE VARIABLES  -->
+            <div class="row">
+              <div class="col-5">
+                <p class="h3">Variables / Indirectos</p>
+                <table class="table table-sm small table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>Horario nocturno</td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.horario_nocturno" class="form-control" style="width: 5em;" type="number" name="proyectoRiesgoso" > </td>
+                      <td > <span class="font-weight-bolder" >%</span> </td> 
+                    </tr>
+                    <tr>
+                      <td>Mano de obra especializada</td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.mano_obra" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td > <span class="font-weight-bolder" >%</span> </td>
+                    </tr>
+                    <tr>
+                      <td>Distancia</td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.distancia" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td > <span class="font-weight-bolder" >KM</span> </td>
+                    </tr>
+                    <tr>
+                      <td>Número de vueltas</td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.num_vueltas" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td  > <span class="font-weight-bolder font-italic" >vueltas</span> </td>
+                    </tr>
+                    <tr>
+                      <td>Precio de la gasolina</td>
+                      <td  > <span class="font-weight-bolder" >$</span> </td>
+                      <td style="width: 5em;"> <input disabled @change="calculaManosObras" v-model="variablesIndirectas.precio_gasolina" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                    </tr>
+                    <tr>
+                      <td>Herramientas</td>
+                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.herramientas" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td><span class="font-weight-bolder" >%</span></td>
+                    </tr>
+                    <tr>
+                      <td>Scanner</td>
+                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.scanner" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td><span class="font-weight-bolder" >%</span></td>
+                    </tr>
+                    <tr>
+                      <td>Viáticos</td>
+                      <td  > <span class="font-weight-bolder" >$</span> </td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.viaticos" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                    </tr>
+                    <tr>
+                      <td>Proyecto Riesgozo</td>
+                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.proyecto_riesgozo" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td><span class="font-weight-bolder" >%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-2"></div>
+              <div class="col-4">
+
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-12">
+                      <p class="h3">Misceláneos</p>
+                      <table class="table table-sm small table-bordered">
+                        <tbody>
+                          <tr>
+                            <td>Misceláneos</td>
+                            <td > <span class="font-weight-bolder" >$</span> </td> 
+                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" name="miscenaleosPorcentaje" > </td>
+                            <td colspan="2"> </td>
+                            <td class="mx-auto"> %</td> 
+                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number" name="miscenaleosMonto" > </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-12 pt-5">
+                      <form @submit.prevent="cargaJustificacionPartner"  >
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Ingrese Costo de Partner</label>
+                          <input type="number" class="form-control" v-model="variablesIndirectas.precioPartner"  >
+                          <small id="emailHelp" class="form-text text-muted">El monto debe ingresarse en USD.</small>
+                        </div>
+                     
+                        <div class="input-group py-3">
+                          <div class="custom-file">
+                            <input  @change="cargaJustificacionPartner(e)" type="file" class="custom-file-input" id="inputFilePartner" >
+                            <label class="custom-file-label" for="inputFilePartner" >Eligue un archivo</label>
+                          </div>
+                        </div>
+                       
+                        <button type="submit" class="btn btn-primary">Subir archivo</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                
+              </div>
+            </div>
+            <!-- TIPO DE CAMBIO / MARGEN -->
+            <div class="row pt-3">
+              <div class="col-3">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th class="table-danger" scope="row">TIPO DE CAMBIO</th>
+                      <td>
+                        <input style="width: 5em;" type="number" class="form-control" v-model="variablesIndirectas.tipo_cambio" name="variablesIndirectas.tipo_cambio" >
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="table-warning" scope="row">MARGEN A APLICAR</th>
+                      <td>
+                        <input style="width: 5em;" class="form-control" v-model="variablesIndirectas.margen_a_aplicar" type="number" name="variablesIndirectas.tipo_cambio">
+                        <span>%</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- COTIZACIONES FINALES -->
+            <div class="row py-5 ">
+              <div class="col-3">
+                <table class="table table-sm">
+                  <tbody>
+                    <tr>
+                      <td class="table-success" scope="row"><span class="font-weight-bold">Calculo de MO (sin margen)</span></td>
+                    </tr>
+                    <tr>
+                      <th class="table-success" scope="row">$ {{this.datosInternos.MO  }}</th>
+                      <td><p class="font-weight-bold ">Costo MXN</p></td>
+                    </tr>
+                    <tr>
+                      <th class="table-success" scope="row">$ {{this.datosInternos.MO / variablesIndirectas.tipo_cambio  }}</th>
+                      <td><p class="font-weight-bold ">Costo USD</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-3">
+                <table class="table table-sm">
+                  <tbody>
+                    <tr>
+                      <td class="table-info" scope="row"><span class="font-weight-bold">Calculo de MO (con margen)</span> </td>
+                    </tr>
+                    <tr>
+                      <th class="table-info" scope="row">$ {{this.datosInternos.MO_CON_MARGEN }}</th>
+                      <td><p class="font-weight-bold ">Costo MXN</p></td>
+                    </tr>
+                    <tr>
+                      <th class="table-info" scope="row">$ {{ this.datosInternos.MO_CON_MARGEN / variablesIndirectas.tipo_cambio}}</th>
+                      <td><p class="font-weight-bold ">Costo USD</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-3">
+                <table class="table table-sm">
+                  <tbody>
+                    <tr>
+                      <td class="table-warning" scope="row"> <span class="font-weight-bold">Calculo de Cota Mayor</span> </td>
+                    </tr>
+                    <tr>
+                      <th class="table-warning" scope="row">$ {{ datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN   }}</th>
+                      <td><p class="font-weight-bold ">Costo MXN</p></td>
+                    </tr>
+                    <tr>
+                      <th class="table-warning" scope="row">$ {{datosInternos.DETALLES_TOTAL_COTA_MAYOR }}</th>
+                      <td><p class="font-weight-bold ">Costo USD</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- CDN DE VUE -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+<script src="https://unpkg.com/vue-router@2.0.0"></script>
+<!-- CDN DE ZOHO -->
+<script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+<!-- CDN DE BOOTSTRAP -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+  integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous" />
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+<!-- Axios CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+
+<!-- MASTER JS CON TODA LA LOGICA -->
+<script src="js/master.js"></script>
+
+</html>

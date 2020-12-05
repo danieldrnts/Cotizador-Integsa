@@ -1,0 +1,80 @@
+{
+  "DETALLES": {
+    "ID": "KEY-AUTO-GENERATED",
+    "FECHA": "fecha_cotizaciion",
+    "PROYECTO": "tipo_proyecto",
+    "ID_COTIZACION": "id_proyecto",
+    "EMPRESA": "empresa_proyecto",
+    "ATENCION": "atencion_proyecto",
+    "PUESTO": "",
+    "FAX": "",
+    "TELEFONOS": "",
+    "NOMBRE_COTIZACION": "",
+    "TIPO_MONEDA": "",
+    "TIEMPO_ENTREGA": "",
+    "LUGAR_ENTREGA": "",
+    "NUMERO_PARTIDAS": 0,
+    "NUMERO_PAGINAS": 0,
+    "TOTAL_COTIZACION": 0,
+    "TOTAL_COTA_MAYOR": 0
+  },
+
+  "MATERIALES_LISTA": [
+    {
+      "ID": 0,
+      "PARTIDA": "partida_material",
+      "CANTIDAD": 0,
+      "UNIDAD": 0,
+      "DESCRIPCION": "descripcion_material",
+      "PRECIO_LISTA": 0,
+      "IMPORTE": "importe_material",
+      "COSTO_INSTALACION_UNIDAD": 0
+    }
+  ],
+
+  "MANO_OBRA": {
+    "PARTIDA": 0,
+    "CANTIDAD": 1,
+    "UNIDAD": 0,
+    "DESCRIPCION": "descripcion_mano_obra",
+    "PRECIO": 0,
+    "IMPORTE": 0,
+    "DIAS_TRABAJO": 0,
+    "IMPUESTOS": 0,
+    "SUPERVISOR": {
+      "CANTIDAD": 0,
+      "UNI_MES": 0,
+      "UNI_DIARIA": 0,
+      "TOTAL_DIARIO": 0
+    },
+    "TECNICO": {
+      "CANTIDAD": 0,
+      "UNI_MES": 0,
+      "UNI_DIARIA": 0,
+      "TOTAL_DIARIO": 0
+    },
+    "MANO_OBRA_FLAT_MXN": 0,
+    "MANO_OBRA_CON_IMPUESTOS": 0
+  },
+
+  "COTIZACION_INTERNA": {
+    "MARGEN_GLOBAL": 0,
+    "INDIRECTOS": 0,
+    "MATERIALES": 0,
+    "MANO_DE_OBRA": 0,
+    "MANO_OBRA_VS_MATERIALES": 0,
+    "INDIRECTOS_VS_MANO_OBRA": 0,
+    "MATERIALES_INTERNA": [
+      {
+        "COSTO_U": 0,
+        "COSTO_TOTAL": 0,
+        "MARGEN_INDIVIDUAL": 0,
+        "PV_UNITARIO": 0,
+        "PV_TOTAL": 0
+      }
+    ],
+    "COSTO_GLOBAL": 0,
+    "PV_GLOBAL": 0,
+    "UTILIDAD": 0
+  }
+}
