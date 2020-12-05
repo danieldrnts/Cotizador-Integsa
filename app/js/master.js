@@ -191,32 +191,6 @@ var app = new Vue({
     };
   },
   methods: {
-    updateTesty() {
-      ZOHO.CREATOR.init().then((data) => {
-        formData = {
-          Testy_Report: [
-            {
-              textito: "inicial",
-              ID: "3405770000000410003",
-              fechita: "04-Dec-2020",
-            },
-          ],
-        };
-
-        var config = {
-          reportname: "Testy_Report",
-          id: "3405770000000410003",
-          data: formData,
-        };
-
-        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
-          if (response.code == 3000) {
-            console.log("Record updated successfully");
-          }
-        });
-      });
-    },
-
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
       elementoMO = this.listaDeMateriales[this.listaDeMateriales.length - 1];
@@ -282,7 +256,7 @@ var app = new Vue({
             this.DatosCotizador.ID_DATOS_COTIZADOR
           );
           // Coloco el ID del reporte Cotizador como el # de cotizacion
-          this.DatosCotizador = this.DatosCotizador.ID;
+          this.datosInternos.DETALLES_NOMBRE_COTIZACION = this.DatosCotizador.ID;
         });
       });
     },
@@ -407,7 +381,7 @@ var app = new Vue({
           COTIZACION_INTERNA_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MATERIALES}`,
           COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}`,
           COTIZACION_INTERNA_PV_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_PV_GLOBAL}`,
-          COTIZACION_INTERNA_COSTO_GLOBAL: `${this.datosInternos.COTIZACION}`,
+          COTIZACION_INTERNA_COSTO_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_COSTO_GLOBAL}`,
           COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
           DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
           DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
@@ -447,7 +421,7 @@ var app = new Vue({
         var config = {
           reportName: "Datos_Cotizador_Report",
           // Aqui el error es el id
-          id: this.DatosCotizador.ID,
+          id: `${this.DatosCotizador.ID}`,
           data: formData,
         };
 
@@ -455,6 +429,9 @@ var app = new Vue({
         ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
           //callback block
           console.log(response);
+          if (response.code == 300) {
+            alert("Guardado con exito.");
+          }
         });
       });
     },
