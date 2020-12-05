@@ -365,7 +365,7 @@ var app = new Vue({
           COTIZACION_INTERNA_UTILIDAD: `${this.datosInternos.COTIZACION_INTERNA_UTILIDAD}`,
           DETALLES_TOTAL_COTA_MAYOR: `${this.datosInternos.DETALLES_TOTAL_COTA_MAYOR}`,
           DETALLES_TOTAL_COTIZACION: `${this.datosInternos.DETALLES_TOTAL_COTIZACION}`,
-          ID: "3405770000000314030",
+          ID: `${this.datosInternos.ID}`,
           DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
           DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
           COTIZACION_INTERNA_MANO_OBRA: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA}`,
@@ -421,7 +421,7 @@ var app = new Vue({
         var config = {
           reportName: "Datos_Cotizador_Report",
           // Aqui el error es el id
-          id: `${this.DatosCotizador.ID}`,
+          id: `${this.datosInternos.ID}`,
           data: formData,
         };
 
