@@ -560,11 +560,15 @@ var app = new Vue({
     // TODO calcular mo vs indirectos  = total_indirectos_usd / importeMO_USD
     calculaMOvsIndirectos() {
       if (this.datosInternos.MO_CON_MARGEN_MXN != 0) {
+        let tempIndirectosUSD = this.variablesIndirectas.total_indirectos_usd;
+        let tempMOmargen = this.datosInternos.MO_CON_MARGEN_MXN;
         //         console.log("CalculaMOvsIndirectos");
-        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS = (
-          parseInt(this.variablesIndirectas.total_indirectos_usd) /
-          parseInt(this.datosInternos.MO_CON_MARGEN_MXN)
-        ).toFixed(2);
+        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS =
+          tempIndirectosUSD / tempMOmargen;
+
+        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS.toFixed(
+          2
+        );
       }
     },
 
