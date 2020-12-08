@@ -190,7 +190,10 @@ var app = new Vue({
       ],
     };
   },
+
   methods: {
+    testerFun() {},
+
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
       elementoMO = this.listaDeMateriales[this.listaDeMateriales.length - 1];
@@ -349,7 +352,6 @@ var app = new Vue({
             objetoMiscelaneos.cantidad_de_piezas = 1;
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
-            console.log(this.listaDeMateriales);
             this.actualizaEstado();
           }
         );
@@ -370,13 +372,13 @@ var app = new Vue({
           DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
           COTIZACION_INTERNA_MANO_OBRA: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA}`,
           DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
-          ID_COTIZACION: "testing daniel anixter",
+          ID_COTIZACION: `${this.datosInternos.ID_COTIZACION}`,
           DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
           DETALLES_NUMERO_PARTIDAS: `${this.datosInternos.DETALLES_NUMERO_PARTIDAS}`,
           DETALLES_PROYECTO: `${this.datosInternos.DETALLES_PROYECTO}`,
           DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
           DETALLES_NOMBRE_COTIZACION: `${this.datosInternos.DETALLES_NOMBRE_COTIZACION}`,
-          DETALLES_TIPO_MONEDA: "Dólares",
+          DETALLES_TIPO_MONEDA: `${this.datosInternos.DETALLES_TIPO_MONEDA}`,
           COTIZACION_INTERNA_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_INDIRECTOS}`,
           COTIZACION_INTERNA_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MATERIALES}`,
           COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}`,
