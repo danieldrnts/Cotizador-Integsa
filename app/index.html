@@ -401,7 +401,7 @@
                     </tr>
                     <tr>
                       <td>Distancia</td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.distancia" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.distancia" class="form-control" style="width: 5em;" type="number"  > </td>
                       <td > <span class="font-weight-bolder" >KM</span> </td>
                     </tr>
                     <tr>
@@ -449,10 +449,10 @@
                           <tr>
                             <td>Misceláneos</td>
                             <td > <span class="font-weight-bolder" >$</span> </td> 
-                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" name="miscenaleosPorcentaje" > </td>
+                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" > </td>
                             <td colspan="2"> </td>
                             <td class="mx-auto"> %</td> 
-                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number" name="miscenaleosMonto" > </td>
+                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number"  > </td>
                           </tr>
                         </tbody>
                       </table>
@@ -495,7 +495,7 @@
                     <tr>
                       <th class="table-warning" scope="row">MARGEN A APLICAR</th>
                       <td>
-                        <input style="width: 5em;" class="form-control" v-model="variablesIndirectas.margen_a_aplicar" type="number" name="variablesIndirectas.tipo_cambio">
+                        <input style="width: 5em;" class="form-control" v-model="variablesIndirectas.margen_a_aplicar" type="number" name="variablesIndirectas.tipo_cambio" value="">
                         <span>%</span>
                       </td>
                     </tr>

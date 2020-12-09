@@ -20,8 +20,8 @@ var app = new Vue({
         total_indirectos_usd: 0,
         tipo_cambio: 5,
         margen_a_aplicar: 6,
-        misceleaneosPorcentaje: 0,
-        misceleaneosMonto: 0,
+        miscelaneosPorcentaje: 0,
+        miscelaneosMonto: 0,
         precioPartner: 0,
         archivoPartner: null,
       },
@@ -80,6 +80,11 @@ var app = new Vue({
         VARIABLE_INDIRECTA_VIATICOS: 0,
         VARIABLE_INDIRECTA_USO_VEHICULO: 0,
         VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: 0,
+        VARIABLE_INDIRECTA_TIPO_CAMBIO: 0,
+        VARIABLE_INDIRECTA_MARGEN_APLICAR: 0,
+        VARIABLE_INDIRECTA_MISCELANEOS_MONTO: 0,
+        VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: 0,
+        VARIABLE_INDIRECTA_COSTO_PARTNER: 0,
         // Variables nuevas
         DETALLES_NUMERO_PAGINAS: `DETALLES_NUMERO_PAGINAS}`,
         COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: 0,
@@ -277,8 +282,23 @@ var app = new Vue({
         ZOHO.CREATOR.API.getAllRecords(proyectoconfig).then((response) => {
           //           console.log(response.data);
           this.datosInternos = response.data[0];
-          this.datosInternos.MES_UNI_SUPERVISOR = 16000;
-          this.datosInternos.MES_UNI_TECNICO = 12000;
+          // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
+          // this.datosInternos.MES_UNI_TECNICO = 12000;
+          this.variablesIndirectas.viaticos = this.datosInternos.VARIABLE_INDIRECTA_VIATICOS;
+          this.variablesIndirectas.horario_nocturno = this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO;
+          this.variablesIndirectas.mano_obra = this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL;
+          this.variablesIndirectas.distancia = this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA;
+          this.variablesIndirectas.num_vueltas = this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA;
+          this.variablesIndirectas.precio_gasolina = this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA;
+          this.variablesIndirectas.herramientas = this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS;
+          this.variablesIndirectas.scanner = this.datosInternos.VARIABLE_INDIRECTA_SCANNER;
+          this.variablesIndirectas.proyecto_riesgozo = this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO;
+
+          this.variablesIndirectas.tipo_cambio = this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO;
+          this.variablesIndirectas.margen_a_aplicar = this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR;
+          this.variablesIndirectas.miscelaneosMonto = this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO;
+          this.variablesIndirectas.miscelaneosPorcentaje = this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE;
+          this.variablesIndirectas.precioPartner = this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER;
           this.showTable = !this.showTable;
         });
       });
@@ -359,6 +379,23 @@ var app = new Vue({
     },
 
     updateField() {
+      this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO = this.variablesIndirectas.tipo_cambio;
+      this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR = this.variablesIndirectas.margen_a_aplicar;
+      this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO = this.variablesIndirectas.miscelaneosMonto;
+      this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE = this.variablesIndirectas.miscelaneosPorcentaje;
+      this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER = this.variablesIndirectas.precioPartner;
+
+      this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO = this.variablesIndirectas.horario_nocturno;
+      this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL = this.variablesIndirectas.mano_obra;
+      this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA = this.variablesIndirectas.distancia;
+      this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA = this.variablesIndirectas.num_vueltas;
+      this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA = this.variablesIndirectas.precio_gasolina;
+      this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS = this.variablesIndirectas.herramientas;
+      this.datosInternos.VARIABLE_INDIRECTA_SCANNER = this.variablesIndirectas.scanner;
+      this.datosInternos.VARIABLE_INDIRECTA_VIATICOS = this.variablesIndirectas.viaticos;
+      // this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO = this.variablesIn
+      this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO = this.variablesIndirectas.proyecto_riesgozo;
+
       formData = {
         data: {
           DETALLES_NUMERO_PAGINAS: `${this.datosInternos.DETALLES_NUMERO_PAGINAS}`,
@@ -416,6 +453,11 @@ var app = new Vue({
           VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
           VARIABLE_INDIRECTA_USO_VEHICULO: `${this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO}`,
           VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
+          VARIABLE_INDIRECTA_TIPO_CAMBIO: `${this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO}`,
+          VARIABLE_INDIRECTA_MARGEN_APLICAR: `${this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR}`,
+          VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
+          VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
+          VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
         },
       };
 
@@ -731,12 +773,12 @@ var app = new Vue({
 
     // calcularMiscelaneos = COTIZACION_INTERNA_MATERIALES * un_campo_de_porcentaje
     calculaMiscelaneos() {
-      if (this.variablesIndirectas.misceleaneosPorcentaje != 0) {
+      if (this.variablesIndirectas.miscelaneosPorcentaje != 0) {
         this.datosInternos.COTIZACION_INTERNA_MATERIALES *
-          this.variablesIndirectas.misceleaneosPorcentaje;
+          this.variablesIndirectas.miscelaneosPorcentaje;
       } else {
         this.datosInternos.COTIZACION_INTERNA_MATERIALES *
-          this.variablesIndirectas.misceleaneosMonto;
+          this.variablesIndirectas.miscelaneosMonto;
       }
     },
 
