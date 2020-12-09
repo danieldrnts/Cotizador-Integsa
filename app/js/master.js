@@ -116,7 +116,7 @@ var app = new Vue({
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
       },
-      showTable: false,
+      showTable: true,
       listaDeMateriales: [
         {
           // NUEVAS VARIABLES
@@ -197,7 +197,18 @@ var app = new Vue({
   },
 
   methods: {
-    testerFun() {},
+    descargaExcel() {
+      // instancia de workbook
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = "Me";
+      workbook.lastModifiedBy = "Her";
+      workbook.created = new Date(1985, 8, 30);
+      workbook.modified = new Date();
+      workbook.lastPrinted = new Date(2016, 9, 27);
+      console.log(workbook);
+    },
+
+    testerFunc() {},
 
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
@@ -782,19 +793,15 @@ var app = new Vue({
       }
     },
 
-    cargaJustificacionPartner(e) {
-      // File object
-      //       console.log(this.variablesIndirectas.precioPartner);
-      // console.log(this.variablesIndirectas.archivoPartner);
-      // console.log(e);
-      let filePartner = e.target.files[0];
+    cargaJustificacionPartner() {
+      // console.log(this.$refs.filePartner.files[0]);
 
-      // config
-      // console.log(config);
+      // let filePartner = e.target.files[0];
+      let filePartner = this.$refs.filePartner.files[0];
 
       var config = {
-        reportName: "Cotizador2_Report",
-        id: this.DatosCotizador.ID,
+        reportName: "Datos_Cotizador_Report",
+        id: this.datosInternos.ID,
         fieldName: "Propuesta_Word",
         file: filePartner,
       };
