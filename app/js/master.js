@@ -2,6 +2,7 @@ var app = new Vue({
   el: "#app",
   data() {
     return {
+      showModal: false,
       // Variable para determinar en qué paso de la cotización me encuentro.
       page: 1,
       URLparametros: null,
@@ -26,6 +27,7 @@ var app = new Vue({
         archivoPartner: null,
       },
       DatosCotizador: {
+        aprobada_por_SuperU: false,
         Cargo_del_ejecutivo: "Tortas y Boings Department",
         Cliente: "sd",
         Costo_final_partner: "0.00",
@@ -829,6 +831,35 @@ var app = new Vue({
       //     //process the JSON data etc
       //   },
       // });
+    },
+
+    aprobarCotizacion() {
+      this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
+        .aprobada_por_SuperU;
+
+      formData = {
+        data: {
+          aprobada_por_SuperU: `${this.DatosCotizador.aprobada_por_SuperU}`,
+        },
+      };
+
+      ZOHO.CREATOR.init().then((data) => {
+        var config = {
+          reportName: "Cotizador2_Report",
+          // Aqui el error es el id
+          id: `${this.DatosCotizador.ID}`,
+          data: formData,
+        };
+
+        //update record API
+        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+          //callback block
+          console.log(response);
+          if (response.code == 300) {
+            alert("Guardado con exito.");
+          }
+        });
+      });
     },
   },
   mounted() {

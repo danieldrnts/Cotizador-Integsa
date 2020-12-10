@@ -11,9 +11,39 @@
     <div style="height: 30em" class="container-fluid">
       <div class="row py-5">
         <div class="col-6">
-          <div @click="testerFunc" class="btn btn-info">
-            Tester 
+
+          <!-- Button trigger modal -->
+    <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <p v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false " >Aprobar cotizacion</p>
+      <p v-else>Cancelar aprobación</p>
+    </button>
+
+    <!-- Modal -->
+    <div v-if="showModal"  class="modal" style="display:block" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false "  class="modal-title">¿Aprobar esta cotización?</h5>
+            <h5 v-else class="modal-title">Cancela la aprobación de la cotización</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
+          <div class="modal-body">
+            <p>Puedes desaprobarla después.</p>
+          </div>
+          <div class="modal-footer">
+            <button @click="showModal = !showModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button @click="aprobarCotizacion" type="button" class="btn btn-primary">
+              <span v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false "   >Aprobar cotización</span>
+              <span v-else >Cancelar aprobación cotizacion</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+          <!-- <div @click="testerFunc" class="btn btn-info">
+            Tester 
+          </div> -->
         </div>
         <div class="col-6">
           <div @click="descargaExcel" class="btn btn-success">
@@ -69,13 +99,13 @@
                   <tbody>
                     <tr>
                       <th scope="row">PROYECTO</th>
-                      <td>{{datosInternos.DETALLES_PROYECTO}}</td>
+                      <td>{{DatosCotizador.proyectos}}</td>
                       <td>MATERIALES</td>
                       <td>${{datosInternos.COTIZACION_INTERNA_MATERIALES}}</td>
                     </tr>
                     <tr>
                       <th scope="row">COTIZACIÓN #</th>
-                      <td>{{datosInternos.DETALLES_NOMBRE_COTIZACION}}</td>
+                      <td>{{datosInternos.ID}}</td>
                       <td>MANO DE OBRA</td>
                       <td>${{datosInternos.MO_CON_MARGEN_MXN }}</td>
                       <td>${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES }}</td>
@@ -176,8 +206,8 @@
                   <thead>
                     <tr>
                       <th scope="col"></th>
-                      <th scope="col"></th>
-                      <th scope="col">{{datosInternos.DETALLES_NOMBRE_COTIZACION}}</th>
+                      <th class="h6" scope="col">Nombre de la cotizacion</th>
+                      <th class="h6" scope="col">{{DatosCotizador.ID_DATOS_COTIZADOR}}</th>
                       <th scope="col"></th>
                       <th scope="col"></th>
                       <th scope="col"></th>
@@ -207,9 +237,6 @@
                       <td class="table-success">MARGEN</td>
                       <td class="table-success">PV SUGERIDO</td>
 
-                    </tr>
-                    <tr>
-                      <td colspan="4">{{datosInternos.DETALLES_PROYECTO}}</td>
                     </tr>
                     <tr v-for="(material, index) in listaDeMateriales" >
                       <td>{{index + 1}}</th>
