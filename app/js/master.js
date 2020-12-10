@@ -116,7 +116,7 @@ var app = new Vue({
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
       },
-      showTable: true,
+      showTable: false,
       listaDeMateriales: [
         {
           // NUEVAS VARIABLES
@@ -295,6 +295,7 @@ var app = new Vue({
           this.datosInternos = response.data[0];
           // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
           // this.datosInternos.MES_UNI_TECNICO = 12000;
+
           this.variablesIndirectas.viaticos = this.datosInternos.VARIABLE_INDIRECTA_VIATICOS;
           this.variablesIndirectas.horario_nocturno = this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO;
           this.variablesIndirectas.mano_obra = this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL;
@@ -809,6 +810,25 @@ var app = new Vue({
       ZOHO.CREATOR.API.uploadFile(config).then(function (response) {
         console.log("File uploaded successfully");
       });
+    },
+
+    descargarFile() {
+      // $.ajax({
+      //   url:
+      //     "https://creator.zoho.com/api/v2/integsa/superappintegsa/report/Datos_Cotizador_Report/3405770000000423002/Propuesta_Word/download",
+      //   type: "GET",
+      //   beforeSend: function (xhr) {
+      //     xhr.setRequestHeader(
+      //       "Authorization",
+      //       "Zoho-oauthtoken 1000.f6f8f7eb4b7e40de93202334cb593e65.19f24d7a8b54df30c6ed6949e3a12fc4"
+      //     );
+      //   },
+      //   success: function (data) {
+      //     // alert(data);
+      //     console.log(data);
+      //     //process the JSON data etc
+      //   },
+      // });
     },
   },
   mounted() {
