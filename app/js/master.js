@@ -287,7 +287,7 @@ var app = new Vue({
         // 2. Obtengo los datos del proyecto de Cotizador
         let proyectoconfig = {
           reportName: "Datos_Cotizador_Report",
-          criteria: `(ID_COTIZACION == "${ID_datos}")`,
+          criteria: `(ID_COTIZACION == "${ID_datos.trimEnd()}")`,
           page: 1,
           pageSize: 10,
         };
@@ -487,8 +487,10 @@ var app = new Vue({
         ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
           //callback block
           console.log(response);
-          if (response.code == 300) {
+          if (response.code == 3000) {
             alert("Guardado con exito.");
+          } else {
+            alert("Error de servidor, intenta de nuevo.");
           }
         });
       });
@@ -850,12 +852,12 @@ var app = new Vue({
     },
 
     aprobarCotizacion() {
-      this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
-        .aprobada_por_SuperU;
+      // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
+      //   .aprobada_por_SuperU;
 
       formData = {
         data: {
-          aprobada_por_SuperU: `${this.DatosCotizador.aprobada_por_SuperU}`,
+          aprobada_por_SuperU: "true",
         },
       };
 

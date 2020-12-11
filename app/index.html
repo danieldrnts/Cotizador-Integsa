@@ -9,34 +9,24 @@
 <body>
   <div id="app">
     <div style="height: 30em" class="container-fluid">
-      <div class="row py-5">
+      <div v-if="showTable" class="row py-5">
         <div class="col-6">
-    <!-- Modal -->
-    <div v-if="showModal"  class="modal" style="display:block" >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false "  class="modal-title">¿Aprobar esta cotización?</h5>
-            <h5 v-else class="modal-title">Cancela la aprobación de la cotización</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <!-- Modal -->
+          <div v-if="showModal"  class="modal" style="display:block" >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">¿Aprobar esta cotización?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showModal = !showModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  <button @click="aprobarCotizacion" type="button" class="btn btn-primary">Aprobar cotización
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            <p>Puedes desaprobarla después.</p>
-          </div>
-          <div class="modal-footer">
-            <button @click="showModal = !showModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button @click="aprobarCotizacion" type="button" class="btn btn-primary">
-              <span v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false "   >Aprobar cotización</span>
-              <span v-else >Cancelar aprobación cotizacion</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-          <!-- <div @click="testerFunc" class="btn btn-info">
-            Tester 
-          </div> -->
         </div>
         
       </div>
@@ -53,7 +43,7 @@
               <img style="height: 6em" src="https://firebasestorage.googleapis.com/v0/b/drntss.appspot.com/o/intega_logo.png?alt=media&token=40cdc5b8-4c78-427a-954d-5556bed09262"
                 alt="integsa-logo" class="img-thumbnail">
             </a>
-            <div class="collapse navbar-collapse">
+            <div v-if="showTable" class="collapse navbar-collapse">
               <div class="navbar-nav">
                 <a @click="page = 1" class="nav-link" :class="{ 'active' : page == 1}" href="#">Formato de Revisión</a>
                 <a @click="page = 2" class="nav-link" :class="{ 'active' : page == 2}" href="#">Cota Mayor</a>
@@ -175,7 +165,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-6">
+              <div v-if="showTable" class="col-6">
                 <div class="container">
                   <div class="row">
                     <div class="col-3">
@@ -187,13 +177,13 @@
                     <div class="col-3">
                       <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <p v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false " >Aprobar cotizacion</p>
-                        <p v-else>Cancelar aprobación</p>
+                        <p v-else >Cotizacion ya aprobada.</p>
                       </button>
                     </div>
                     <div class="col-3">
-                      <div @click="descargaExcel" class="btn btn-success">
+                      <!-- <div @click="descargaExcel" class="btn btn-success">
                         DESCARGA EXCEL
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -505,7 +495,7 @@
                           </div>
                         </div>
                        
-                        <button @click="descargarFile" type="submit" class="btn btn-primary">Descargar</button>
+                        <!-- <button @click="descargarFile" type="submit" class="btn btn-primary">Descargar</button> -->
                         <!-- <a download="excel" :href="this.datosInternos.Propuesta_Word">yes</a> -->
                       </form>
                     </div>
