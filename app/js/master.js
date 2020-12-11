@@ -761,42 +761,42 @@ var app = new Vue({
       }
     },
 
-    calculaManosObras() {
-      // set variables local temporales para parsear a int
-      let varIndirectasTotal = parseInt(
-        this.variablesIndirectas.total_indirectos
-      );
-      let tempMOimpuestos = parseInt(this.datosInternos.MO_CON_IMPUESTOS);
-      // Actualizo las variables indirectas
-      this.setVariablesIndirectas();
-      // MO =  costoIndirectos + mo con impuestos
-      this.datosInternos.MO = varIndirectasTotal + tempMOimpuestos;
-      // MO_con_Margen =  MO ( 1 + MARGEN A APLICARCampo)
-      this.datosInternos.MO_CON_MARGEN =
-        (this.datosInternos.MO *
-          (1 + this.variablesIndirectas.margen_a_aplicar)) /
-        100;
-      // MO_con_Margen_a_USD = MO_con_Margen / tipo_de_cambio_campo
-      this.datosInternos.MO_CON_MARGEN_MXN =
-        this.datosInternos.MO_CON_MARGEN * this.variablesIndirectas.tipo_cambio;
+    // calculaManosObras() {
+    //   // set variables local temporales para parsear a int
+    //   let varIndirectasTotal = parseInt(
+    //     this.variablesIndirectas.total_indirectos
+    //   );
+    //   let tempMOimpuestos = parseInt(this.datosInternos.MO_CON_IMPUESTOS);
+    //   // Actualizo las variables indirectas
+    //   this.setVariablesIndirectas();
+    //   // MO =  costoIndirectos + mo con impuestos
+    //   this.datosInternos.MO = varIndirectasTotal + tempMOimpuestos;
+    //   // MO_con_Margen =  MO ( 1 + MARGEN A APLICARCampo)
+    //   this.datosInternos.MO_CON_MARGEN =
+    //     (this.datosInternos.MO *
+    //       (1 + this.variablesIndirectas.margen_a_aplicar)) /
+    //     100;
+    //   // MO_con_Margen_a_USD = MO_con_Margen / tipo_de_cambio_campo
+    //   this.datosInternos.MO_CON_MARGEN_MXN =
+    //     this.datosInternos.MO_CON_MARGEN * this.variablesIndirectas.tipo_cambio;
 
-      let tempManoObra = this.listaDeMateriales[
-        this.listaDeMateriales.length - 2
-      ];
+    //   let tempManoObra = this.listaDeMateriales[
+    //     this.listaDeMateriales.length - 2
+    //   ];
 
-      tempManoObra.importe = this.datosInternos.MO_CON_MARGEN;
-      tempManoObra.margen_individual = parseInt(
-        this.variablesIndirectas.margen_a_aplicar
-      );
+    //   tempManoObra.importe = this.datosInternos.MO_CON_MARGEN;
+    //   tempManoObra.margen_individual = parseInt(
+    //     this.variablesIndirectas.margen_a_aplicar
+    //   );
 
-      let tempMiscelaneos = this.listaDeMateriales[
-        this.listaDeMateriales.length - 1
-      ];
-      tempMiscelaneos.margen_individual = parseInt(
-        this.variablesIndirectas.miscelaneosPorcentaje
-      );
-      tempMiscelaneos.importe = this.variablesIndirectas.miscelaneosMonto;
-    },
+    //   let tempMiscelaneos = this.listaDeMateriales[
+    //     this.listaDeMateriales.length - 1
+    //   ];
+    //   tempMiscelaneos.margen_individual = parseInt(
+    //     this.variablesIndirectas.miscelaneosPorcentaje
+    //   );
+    //   tempMiscelaneos.importe = this.variablesIndirectas.miscelaneosMonto;
+    // },
 
     // ConvertirCotaMayorMXN = cotaMayor * tipo_de_cambio_campo
     cotaMayorMXN() {
@@ -831,9 +831,9 @@ var app = new Vue({
         } else {
           element.costo_total = element.cantidad_de_piezas * element.costo_u;
           element.precio_lista =
-            element.costo_u * (element.margen_individual / 100);
+            element.costo_u * (1 + element.margen_individual / 100);
           element.pv_total =
-            element.costo_total * (element.margen_individual / 100);
+            element.costo_total * (1 + element.margen_individual / 100);
           element.importe = element.pv_total;
         }
       });
@@ -898,6 +898,14 @@ var app = new Vue({
         parseInt(this.variablesIndirectas.total_indirectos) +
         this.datosInternos.MO_CON_IMPUESTOS;
 
+      this.datosInternos.MO_CON_MARGEN =
+        this.datosInternos.MO *
+        (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+
+      this.datosInternos.MO_CON_MARGEN_MXN =
+        this.datosInternos.MO *
+        (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+
       // Instalacion y puesta de la tabla de inicio
       let localInstalacion = this.listaDeMateriales[
         this.listaDeMateriales.length - 2
@@ -905,12 +913,17 @@ var app = new Vue({
 
       localInstalacion.margen_individual = this.variablesIndirectas.margen_a_aplicar;
       localInstalacion.costo_u =
-        this.datosInternos.MO / this.variablesIndirectas.tipo_cambio;
+        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
       localInstalacion.costo_total =
-        this.datosInternos.MO / this.variablesIndirectas.tipo_cambio;
+        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
+      // localInstalacion.importe =
+      //   localInstalacion.costo_u *
+      //   (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+      // localInstalacion.precio_lista = localInstalacion.costo_u;
       localInstalacion.importe =
-        localInstalacion.costo_u * this.variablesIndirectas.margen_a_aplicar;
-      localInstalacion.precio_lista = localInstalacion.costo_u;
+        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
+      localInstalacion.precio_lista =
+        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
 
       // sumar Total importe y total costos totales
       this.datosInternos.COTIZACION_INTERNA_TOTAL = 0;
@@ -928,10 +941,11 @@ var app = new Vue({
         this.datosInternos.DETALLES_TOTAL_COTIZACION -
         this.datosInternos.COTIZACION_INTERNA_TOTAL;
       this.datosInternos.UTILIDAD_PORCENTAJE = 0;
-      this.datosInternos.UTILIDAD_PORCENTAJE =
-        1 -
-        this.datosInternos.COTIZACION_INTERNA_TOTAL /
-          this.datosInternos.DETALLES_TOTAL_COTIZACION;
+      let tempDivision =
+        parseInt(this.datosInternos.COTIZACION_INTERNA_TOTAL) /
+        parseInt(this.datosInternos.DETALLES_TOTAL_COTIZACION);
+
+      this.datosInternos.UTILIDAD_PORCENTAJE = (1 - tempDivision) * 100;
     },
 
     cargaJustificacionPartner() {
