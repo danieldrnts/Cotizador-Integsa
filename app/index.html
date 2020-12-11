@@ -170,6 +170,7 @@
                   <div class="row">
                     <div class="col-3">
                       <p class="h3">Porcentaje de utilidad</p>
+                      <button @click="flujoGeneral" class="btn btn-primary" > Flujo</button>
                     </div>
                     <div class="col-3">
                       <p class="h4"> {{datosInternos.UTILIDAD_PORCENTAJE}} %</p>
@@ -231,7 +232,8 @@
                     <tr v-for="(material, index) in listaDeMateriales" >
                       <td>{{index + 1}}</th>
                       <td :class="{'table-danger' : material.cantidad_de_piezas < 1}" >
-                        <input  @change="actualizaEstado" min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" >
+                        <!-- <input  @change="actualizaEstado" min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" > -->
+                        <input   min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" >
                       </td>
                       <td>{{material.unidad}}</td>
                       <td>{{material.descripcion}}</td>
@@ -240,8 +242,10 @@
                       <td>${{material.costo_u}}</th>
                       <td>${{material.costo_total}}</td>
                       <td :class="{ 'table-warning' : material.margen_individual > 25, 'table-danger' : material.margen_individual <= 24 }">
-                        <input  class="form-control" style="width: 5em;" @change="actualizaEstado" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
+                        <input  class="form-control" style="width: 5em;"  :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
                           value="material.margen_individual" >
+                          <!-- <input  class="form-control" style="width: 5em;" @change="actualizaEstado" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
+                          value="material.margen_individual" > -->
                         <span class="font-weight-bold">%</span> </td>
                       <td>${{material.pv_sugerido}}</td>
                     </tr>
@@ -270,7 +274,7 @@
                       <td></td>
                       <!-- <td class="table-info"> jeje {{datosInternos.COTIZACION_INTERNA_COSTO_GLOBAL}}</td> -->
                       <td></td>
-                      <td>{{datosInternos.COTIZACION_INTERNA_PV_GLOBAL}}</td>
+                      <!-- <td>{{datosInternos.COTIZACION_INTERNA_PV_GLOBAL}}</td> -->
                     </tr>
                     <tr>
                       <td>
@@ -356,7 +360,7 @@
                     <tr>
                       <td>Supervisor</td>
                       <td class="table-info">
-                        <input @change="terceraVistaFlujo" v-model="datosInternos.CUANTOS_SUPERVISOR" type="number" class="form-control" >
+                        <input  v-model="datosInternos.CUANTOS_SUPERVISOR" type="number" class="form-control" >
                       </td>
                       <td>
                         $ {{datosInternos.MES_UNI_SUPERVISOR}} MXN
@@ -369,7 +373,7 @@
                     <tr>
                       <td>Técnico</td>
                       <td class="table-info" >
-                        <input  @change="terceraVistaFlujo" v-model="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
+                        <input   v-model="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
                       </td>
                       <td>
                         $ {{datosInternos.MES_UNI_TECNICO}} MXN
@@ -414,47 +418,47 @@
                   <tbody>
                     <tr>
                       <td>Horario nocturno</td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.horario_nocturno" class="form-control" style="width: 5em;" type="number" name="proyectoRiesgoso" > </td>
+                      <td style="width: 5em;"> <input v-model="variablesIndirectas.horario_nocturno" class="form-control" style="width: 5em;" type="number" name="proyectoRiesgoso" > </td>
                       <td > <span class="font-weight-bolder" >%</span> </td> 
                     </tr>
                     <tr>
                       <td>Mano de obra especializada</td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.mano_obra" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td style="width: 5em;"> <input v-model="variablesIndirectas.mano_obra" class="form-control" style="width: 5em;" type="number" name="" > </td>
                       <td > <span class="font-weight-bolder" >%</span> </td>
                     </tr>
                     <tr>
                       <td>Distancia</td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.distancia" class="form-control" style="width: 5em;" type="number"  > </td>
+                      <td style="width: 5em;"> <input v-model="variablesIndirectas.distancia" class="form-control" style="width: 5em;" type="number"  > </td>
                       <td > <span class="font-weight-bolder" >KM</span> </td>
                     </tr>
                     <tr>
                       <td>Número de vueltas</td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.num_vueltas" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td style="width: 5em;"> <input v-model="variablesIndirectas.num_vueltas" class="form-control" style="width: 5em;" type="number" name="" > </td>
                       <td  > <span class="font-weight-bolder font-italic" >vueltas</span> </td>
                     </tr>
                     <tr>
                       <td>Precio de la gasolina</td>
                       <td  > <span class="font-weight-bolder" >$</span> </td>
-                      <td style="width: 5em;"> <input disabled @change="calculaManosObras" v-model="variablesIndirectas.precio_gasolina" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td style="width: 5em;"> <input disabled v-model="variablesIndirectas.precio_gasolina" class="form-control" style="width: 5em;" type="number" name="" > </td>
                     </tr>
                     <tr>
                       <td>Herramientas</td>
-                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.herramientas" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td style="width: 5em;" > <input v-model="variablesIndirectas.herramientas" class="form-control" style="width: 5em;" type="number" name="" >  </td>
                       <td><span class="font-weight-bolder" >%</span></td>
                     </tr>
                     <tr>
                       <td>Scanner</td>
-                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.scanner" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td style="width: 5em;" > <input v-model="variablesIndirectas.scanner" class="form-control" style="width: 5em;" type="number" name="" >  </td>
                       <td><span class="font-weight-bolder" >%</span></td>
                     </tr>
                     <tr>
                       <td>Viáticos</td>
                       <td  > <span class="font-weight-bolder" >$</span> </td>
-                      <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.viaticos" class="form-control" style="width: 5em;" type="number" name="" > </td>
+                      <td style="width: 5em;"> <input v-model="variablesIndirectas.viaticos" class="form-control" style="width: 5em;" type="number" name="" > </td>
                     </tr>
                     <tr>
                       <td>Proyecto Riesgozo</td>
-                      <td style="width: 5em;" > <input @change="calculaManosObras" v-model="variablesIndirectas.proyecto_riesgozo" class="form-control" style="width: 5em;" type="number" name="" >  </td>
+                      <td style="width: 5em;" > <input v-model="variablesIndirectas.proyecto_riesgozo" class="form-control" style="width: 5em;" type="number" name="" >  </td>
                       <td><span class="font-weight-bolder" >%</span></td>
                     </tr>
                   </tbody>
@@ -472,10 +476,10 @@
                           <tr>
                             <td>Misceláneos</td>
                             <td > <span class="font-weight-bolder" >$</span> </td> 
-                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" > </td>
+                            <td style="width: 5em;"> <input  v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" > </td>
                             <td colspan="2"> </td>
                             <td class="mx-auto"> %</td> 
-                            <td style="width: 5em;"> <input @change="calculaManosObras" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number"  > </td>
+                            <td style="width: 5em;"> <input  v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number"  > </td>
                           </tr>
                         </tbody>
                       </table>
@@ -513,13 +517,13 @@
                     <tr>
                       <th class="table-danger" scope="row">TIPO DE CAMBIO</th>
                       <td>
-                        <input style="width: 5em;" type="number" class="form-control" v-model="variablesIndirectas.tipo_cambio" name="variablesIndirectas.tipo_cambio" >
+                        <input style="width: 5em;" type="number" class="form-control" v-model="variablesIndirectas.tipo_cambio"  >
                       </td>
                     </tr>
                     <tr>
                       <th class="table-warning" scope="row">MARGEN A APLICAR</th>
                       <td>
-                        <input style="width: 5em;" class="form-control" v-model="variablesIndirectas.margen_a_aplicar" type="number" name="variablesIndirectas.tipo_cambio" value="">
+                        <input style="width: 5em;" class="form-control" v-model="variablesIndirectas.margen_a_aplicar" type="number" >
                         <span>%</span>
                       </td>
                     </tr>
