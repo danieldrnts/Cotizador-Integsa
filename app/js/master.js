@@ -168,9 +168,9 @@ var app = new Vue({
           costo_unidad: 0,
           descripcion: "INSTALACIÓN Y PUESTA EN OPERACIÓN",
           margen_individual: 0,
-          precio_lista: 137.0,
+          precio_lista: 0,
           pv_total: 0,
-          pv_unitario: 137.0,
+          pv_unitario: 0,
           unidad: "Srv.",
           pv_sugerido: 0,
           cantidad_de_piezas: 1,
@@ -528,7 +528,11 @@ var app = new Vue({
         //   element.costo_u * (1 + element.margen_individual);
         element.precio_lista = element.pv_unitario;
         element.importe = element.cantidad_de_piezas * element.precio_lista;
-        element.costo_total = element.cantidad_de_piezas * element.costo_u;
+        if (element.costo_u == 0) {
+          element.costo_total = element.cantidad_de_piezas * 1;
+        } else {
+          element.costo_total = element.cantidad_de_piezas * element.costo_u;
+        }
       });
     },
 
@@ -559,7 +563,7 @@ var app = new Vue({
       this.listaDeMateriales.forEach((element) => {
         costo_total = costo_total + element.costo_total;
       });
-      this.datosInternos.COTIZACION_INTERNA_TOTAL = costo_total.toFixed(2);
+      this.datosInternos.COTIZACION_INTERNA_TOTAL = costo_total;
       this.getUtilidad();
     },
 
@@ -594,12 +598,10 @@ var app = new Vue({
 
     // calculaMateriales = calculoImporte - importeMO - IndirectosConvertidosUSD
     calculaMateriales() {
-      this.datosInternos.COTIZACION_INTERNA_MATERIALES = (
+      this.datosInternos.COTIZACION_INTERNA_MATERIALES =
         parseInt(this.datosInternos.DETALLES_TOTAL_COTIZACION) -
         parseInt(this.datosInternos.IMPORTE_MO) -
-        parseInt(this.datosInternos.INDIRECTOS_USD)
-      ).toFixed(2);
-      // this.datosInternos.COTIZACION_INTERNA_MATERIALES.toFixed(2);
+        parseInt(this.datosInternos.INDIRECTOS_USD);
     },
 
     //  calculaMOvsMateriales = importeMO /  calculaMateriales  /// / si calculaMateriales == 0, entonces "mensaje de error - no hay materiales"
@@ -622,9 +624,7 @@ var app = new Vue({
         this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS =
           tempIndirectosUSD / tempMOmargen;
 
-        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS.toFixed(
-          2
-        );
+        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS;
       }
     },
 
@@ -657,60 +657,55 @@ var app = new Vue({
     //mes uni editable LISTO
     setVariablesPersonal() {
       //diario uni = mes uni / 30  CHECAR ESTO PARA HACER LA DIVISION
-      this.datosInternos.DIARIO_UNI_SUPERVISOR = (
-        this.datosInternos.MES_UNI_SUPERVISOR / 30
-      ).toFixed(2);
+      this.datosInternos.DIARIO_UNI_SUPERVISOR =
+        this.datosInternos.MES_UNI_SUPERVISOR / 30;
 
-      this.datosInternos.DIARIO_UNI_TECNICO = (
-        this.datosInternos.MES_UNI_TECNICO / 30
-      ).toFixed(2);
+      this.datosInternos.DIARIO_UNI_TECNICO =
+        this.datosInternos.MES_UNI_TECNICO / 30;
 
       //tot costo diario = diario uni * cuantos
-      this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR = (
+      this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR =
         this.datosInternos.DIARIO_UNI_SUPERVISOR *
-        this.datosInternos.CUANTOS_SUPERVISOR
-      ).toFixed(2);
+        this.datosInternos.CUANTOS_SUPERVISOR;
 
-      this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO = (
+      this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO =
         this.datosInternos.DIARIO_UNI_TECNICO *
-        this.datosInternos.CUANTOS_TECNICO
-      ).toFixed(2);
+        this.datosInternos.CUANTOS_TECNICO;
 
-      this.total_costo_diario_local = (
+      this.total_costo_diario_local =
         parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR) +
-        parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO)
-      ).toFixed(2);
+        parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO);
     },
 
     // mo flat = (suma de costos totales diarios * numero de dias )
     calculaMOflat() {
-      this.datosInternos.MO_FLAT_MXN = (
+      this.datosInternos.MO_FLAT_MXN =
         (parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR) +
           parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO)) *
-        this.DatosCotizador.Duraci_n_del_proyecto
-      ).toFixed(2);
+        this.DatosCotizador.Duraci_n_del_proyecto;
     },
     // mo con impuestos = (suma de costos totales diarios * numero de dias ) * 1.3
     calculaMOconImpuestos() {
-      this.datosInternos.MO_CON_IMPUESTOS = (
+      this.datosInternos.MO_CON_IMPUESTOS =
         (parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR) +
           parseInt(this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO)) *
         this.DatosCotizador.Duraci_n_del_proyecto *
-        1.3
-      ).toFixed(2);
+        1.3;
     },
 
     // VARIABLES / INDIRECTOS
     setVariablesIndirectas() {
       // horarioNocturno = mo con impuestos * porcentajeHorarioNocturno
       this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO =
-        this.datosInternos.MO_CON_IMPUESTOS *
-        this.DatosCotizador.horas_trabajo_nocturno;
+        (this.datosInternos.MO_CON_IMPUESTOS *
+          this.DatosCotizador.horas_trabajo_nocturno) /
+        100;
 
       // manoObraEspecializada = mo con impuestos * manoObraEspecializadaCampo
       this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL =
-        this.datosInternos.MO_CON_IMPUESTOS *
-        this.variablesIndirectas.mano_obra;
+        (this.datosInternos.MO_CON_IMPUESTOS *
+          this.variablesIndirectas.mano_obra) /
+        100;
 
       // usoDeVehiculo =
       // CONST = 7.5km x 1 litro
@@ -726,18 +721,22 @@ var app = new Vue({
       // herramientas = mo con impuestos * herramientasCampo
       // El resto de campos es el mismo calculo.
       this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS =
-        this.datosInternos.MO_CON_IMPUESTOS *
-        this.variablesIndirectas.herramientas;
+        (this.datosInternos.MO_CON_IMPUESTOS *
+          this.variablesIndirectas.herramientas) /
+        100;
 
       this.datosInternos.VARIABLE_INDIRECTA_SCANNER =
-        this.datosInternos.MO_CON_IMPUESTOS * this.variablesIndirectas.scanner;
+        (this.datosInternos.MO_CON_IMPUESTOS *
+          this.variablesIndirectas.scanner) /
+        100;
 
       this.datosInternos.VARIABLE_INDIRECTA_VIATICOS =
         this.datosInternos.MO_CON_IMPUESTOS * this.variablesIndirectas.viaticos;
 
       this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO =
-        this.datosInternos.MO_CON_IMPUESTOS *
-        this.variablesIndirectas.proyecto_riesgozo;
+        (this.datosInternos.MO_CON_IMPUESTOS *
+          this.variablesIndirectas.proyecto_riesgozo) /
+        100;
 
       // Sumo todos los indirectos
       // SumaIndirectos = costoIndirectos
@@ -751,11 +750,10 @@ var app = new Vue({
 
       // IndirectosConvertidosUSD = (1 + margenCampo) *  costoIndirectos / tipo_de_cambio_campo
       if (this.variablesIndirectas.tipo_cambio != 0) {
-        this.variablesIndirectas.total_indirectos_usd = (
+        this.variablesIndirectas.total_indirectos_usd =
           ((1 + this.variablesIndirectas.margen_a_aplicar) *
             this.variablesIndirectas.total_indirectos) /
-          this.variablesIndirectas.tipo_cambio
-        ).toFixed(2);
+          this.variablesIndirectas.tipo_cambio;
       }
     },
 
@@ -771,11 +769,29 @@ var app = new Vue({
       this.datosInternos.MO = varIndirectasTotal + tempMOimpuestos;
       // MO_con_Margen =  MO ( 1 + MARGEN A APLICARCampo)
       this.datosInternos.MO_CON_MARGEN =
-        this.datosInternos.MO * (1 + this.variablesIndirectas.margen_a_aplicar);
+        (this.datosInternos.MO *
+          (1 + this.variablesIndirectas.margen_a_aplicar)) /
+        100;
       // MO_con_Margen_a_USD = MO_con_Margen / tipo_de_cambio_campo
       this.datosInternos.MO_CON_MARGEN_MXN =
         this.datosInternos.MO_CON_MARGEN * this.variablesIndirectas.tipo_cambio;
-      // this.datosInternos.MO_CON_MARGEN_MXN.toFixed(2);
+
+      let tempManoObra = this.listaDeMateriales[
+        this.listaDeMateriales.length - 2
+      ];
+
+      tempManoObra.importe = this.datosInternos.MO_CON_MARGEN;
+      tempManoObra.margen_individual = parseInt(
+        this.variablesIndirectas.margen_a_aplicar
+      );
+
+      let tempMiscelaneos = this.listaDeMateriales[
+        this.listaDeMateriales.length - 1
+      ];
+      tempMiscelaneos.margen_individual = parseInt(
+        this.variablesIndirectas.miscelaneosPorcentaje
+      );
+      tempMiscelaneos.importe = this.variablesIndirectas.miscelaneosMonto;
     },
 
     // ConvertirCotaMayorMXN = cotaMayor * tipo_de_cambio_campo

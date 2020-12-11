@@ -11,13 +11,6 @@
     <div style="height: 30em" class="container-fluid">
       <div class="row py-5">
         <div class="col-6">
-
-          <!-- Button trigger modal -->
-    <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      <p v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false " >Aprobar cotizacion</p>
-      <p v-else>Cancelar aprobación</p>
-    </button>
-
     <!-- Modal -->
     <div v-if="showModal"  class="modal" style="display:block" >
       <div class="modal-dialog">
@@ -45,11 +38,7 @@
             Tester 
           </div> -->
         </div>
-        <div class="col-6">
-          <div @click="descargaExcel" class="btn btn-success">
-            DESCARGA EXCEL
-          </div>
-        </div>
+        
       </div>
       <!-- Boton para obtener tablas de cotizaciones -->
       <div class="row pt-5">
@@ -107,7 +96,7 @@
                       <th scope="row">COTIZACIÓN #</th>
                       <td>{{datosInternos.ID}}</td>
                       <td>MANO DE OBRA</td>
-                      <td>${{datosInternos.MO_CON_MARGEN_MXN }}</td>
+                      <td>${{datosInternos.MO_CON_MARGEN }}</td>
                       <td>${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES }}</td>
                       <td>MO vs Mat.</td>
                     </tr>
@@ -186,14 +175,25 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-4">
+              <div class="col-6">
                 <div class="container">
                   <div class="row">
-                    <div class="col-6">
+                    <div class="col-3">
                       <p class="h3">Porcentaje de utilidad</p>
                     </div>
-                    <div class="col-6">
+                    <div class="col-3">
                       <p class="h4"> {{datosInternos.UTILIDAD_PORCENTAJE}} %</p>
+                    </div>
+                    <div class="col-3">
+                      <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <p v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false " >Aprobar cotizacion</p>
+                        <p v-else>Cancelar aprobación</p>
+                      </button>
+                    </div>
+                    <div class="col-3">
+                      <div @click="descargaExcel" class="btn btn-success">
+                        DESCARGA EXCEL
+                      </div>
                     </div>
                   </div>
                 </div>
