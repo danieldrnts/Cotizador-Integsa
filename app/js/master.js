@@ -118,7 +118,7 @@ var app = new Vue({
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
       },
-      showTable: true,
+      showTable: false,
       listaDeMateriales: [
         {
           // NUEVAS VARIABLES
@@ -298,21 +298,48 @@ var app = new Vue({
           // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
           // this.datosInternos.MES_UNI_TECNICO = 12000;
 
-          this.variablesIndirectas.viaticos = this.datosInternos.VARIABLE_INDIRECTA_VIATICOS;
-          this.variablesIndirectas.horario_nocturno = this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO;
-          this.variablesIndirectas.mano_obra = this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL;
-          this.variablesIndirectas.distancia = this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA;
-          this.variablesIndirectas.num_vueltas = this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA;
-          this.variablesIndirectas.precio_gasolina = this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA;
-          this.variablesIndirectas.herramientas = this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS;
-          this.variablesIndirectas.scanner = this.datosInternos.VARIABLE_INDIRECTA_SCANNER;
-          this.variablesIndirectas.proyecto_riesgozo = this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO;
+          this.variablesIndirectas.viaticos = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_VIATICOS
+          );
+          this.variablesIndirectas.horario_nocturno = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO
+          );
+          this.variablesIndirectas.mano_obra = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL
+          );
+          this.variablesIndirectas.distancia = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA
+          );
+          this.variablesIndirectas.num_vueltas = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA
+          );
+          this.variablesIndirectas.precio_gasolina = 15;
+          this.variablesIndirectas.herramientas = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS
+          );
+          this.variablesIndirectas.scanner = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_SCANNER
+          );
+          this.variablesIndirectas.proyecto_riesgozo = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO
+          );
 
-          this.variablesIndirectas.tipo_cambio = this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO;
-          this.variablesIndirectas.margen_a_aplicar = this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR;
-          this.variablesIndirectas.miscelaneosMonto = this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO;
-          this.variablesIndirectas.miscelaneosPorcentaje = this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE;
-          this.variablesIndirectas.precioPartner = this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER;
+          this.variablesIndirectas.tipo_cambio = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO
+          );
+          this.variablesIndirectas.margen_a_aplicar = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR
+          );
+          this.variablesIndirectas.miscelaneosMonto = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO
+          );
+          this.variablesIndirectas.miscelaneosPorcentaje = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE
+          );
+          this.variablesIndirectas.precioPartner = parseInt(
+            this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER
+          );
+          this.flujoGeneral();
           this.showTable = !this.showTable;
         });
       });
@@ -843,7 +870,7 @@ var app = new Vue({
       ];
       localMiscelaneos.precio_lista =
         this.variablesIndirectas.miscelaneosMonto *
-        (this.variablesIndirectas.miscelaneosPorcentaje / 100);
+        (1 + this.variablesIndirectas.miscelaneosPorcentaje / 100);
       localMiscelaneos.importe = localMiscelaneos.precio_lista;
       localMiscelaneos.margen_individual = this.variablesIndirectas.miscelaneosPorcentaje;
       localMiscelaneos.costo_u = this.variablesIndirectas.miscelaneosMonto;
@@ -866,9 +893,9 @@ var app = new Vue({
 
       // MO_FLAT en pesos mexicanos
       this.datosInternos.MO_FLAT_MXN =
-        this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR +
-        this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO *
-          this.DatosCotizador.Duraci_n_del_proyecto;
+        (this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR +
+          this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO) *
+        this.DatosCotizador.Duraci_n_del_proyecto;
 
       this.total_costo_diario_local =
         this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR +
@@ -881,30 +908,33 @@ var app = new Vue({
       const KmLitro = 7.5;
 
       this.variablesIndirectas.total_indirectos =
-        (this.variablesIndirectas.horario_nocturno / 100 +
-          this.variablesIndirectas.mano_obra / 100 +
-          this.variablesIndirectas.herramientas / 100 +
-          this.variablesIndirectas.proyecto_riesgozo / 100) *
-          this.datosInternos.MO_CON_IMPUESTOS +
-        ((this.variablesIndirectas.distancia *
-          this.variablesIndirectas.precio_gasolina) /
+        (parseInt(this.variablesIndirectas.horario_nocturno) / 100 +
+          parseInt(this.variablesIndirectas.mano_obra) / 100 +
+          parseInt(this.variablesIndirectas.herramientas) / 100 +
+          parseInt(this.variablesIndirectas.proyecto_riesgozo) / 100) *
+          parseInt(this.datosInternos.MO_CON_IMPUESTOS) +
+        ((parseInt(this.variablesIndirectas.distancia) *
+          parseInt(this.variablesIndirectas.precio_gasolina)) /
           KmLitro) *
           2 *
-          this.variablesIndirectas.num_vueltas +
-        this.variablesIndirectas.viaticos;
+          parseInt(this.variablesIndirectas.num_vueltas) +
+        parseInt(this.variablesIndirectas.viaticos);
 
       // MANOS
       this.datosInternos.MO =
         parseInt(this.variablesIndirectas.total_indirectos) +
-        this.datosInternos.MO_CON_IMPUESTOS;
+        this.datosInternos.MO_CON_IMPUESTOS +
+        parseInt(this.variablesIndirectas.precioPartner);
 
       this.datosInternos.MO_CON_MARGEN =
         this.datosInternos.MO *
-        (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+          (1 + this.variablesIndirectas.margen_a_aplicar / 100) +
+        this.variablesIndirectas.precioPartner;
 
       this.datosInternos.MO_CON_MARGEN_MXN =
         this.datosInternos.MO *
-        (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+          (1 + this.variablesIndirectas.margen_a_aplicar / 100) +
+        this.variablesIndirectas.precioPartner;
 
       // Instalacion y puesta de la tabla de inicio
       let localInstalacion = this.listaDeMateriales[
@@ -913,9 +943,9 @@ var app = new Vue({
 
       localInstalacion.margen_individual = this.variablesIndirectas.margen_a_aplicar;
       localInstalacion.costo_u =
-        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
+        this.datosInternos.MO / this.variablesIndirectas.tipo_cambio;
       localInstalacion.costo_total =
-        this.datosInternos.MO_CON_MARGEN / this.variablesIndirectas.tipo_cambio;
+        this.datosInternos.MO / this.variablesIndirectas.tipo_cambio;
       // localInstalacion.importe =
       //   localInstalacion.costo_u *
       //   (1 + this.variablesIndirectas.margen_a_aplicar / 100);
@@ -930,9 +960,11 @@ var app = new Vue({
       this.datosInternos.DETALLES_TOTAL_COTIZACION = 0;
       this.listaDeMateriales.forEach((element) => {
         this.datosInternos.COTIZACION_INTERNA_TOTAL =
-          this.datosInternos.COTIZACION_INTERNA_TOTAL + element.costo_total;
+          this.datosInternos.COTIZACION_INTERNA_TOTAL +
+          parseInt(element.costo_total);
         this.datosInternos.DETALLES_TOTAL_COTIZACION =
-          this.datosInternos.DETALLES_TOTAL_COTIZACION + element.importe;
+          this.datosInternos.DETALLES_TOTAL_COTIZACION +
+          parseInt(element.importe);
       });
 
       // Calcula utilidad
@@ -946,6 +978,30 @@ var app = new Vue({
         parseInt(this.datosInternos.DETALLES_TOTAL_COTIZACION);
 
       this.datosInternos.UTILIDAD_PORCENTAJE = (1 - tempDivision) * 100;
+
+      //Indirectos
+      this.variablesIndirectas.total_indirectos_usd =
+        (this.variablesIndirectas.total_indirectos *
+          (1 + this.variablesIndirectas.margen_a_aplicar / 100)) /
+        this.variablesIndirectas.tipo_cambio;
+
+      // mano obra
+      this.datosInternos.COTIZACION_INTERNA_MANO_OBRA =
+        localInstalacion.importe -
+        this.variablesIndirectas.total_indirectos_usd;
+
+      // materiales
+      this.datosInternos.COTIZACION_INTERNA_MATERIALES =
+        this.datosInternos.DETALLES_TOTAL_COTIZACION - localInstalacion.importe;
+      // MO vs materiales
+      this.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES =
+        this.datosInternos.COTIZACION_INTERNA_MANO_OBRAtotal_indirectos_usd /
+        this.datosInternos.COTIZACION_INTERNA_MATERIALES;
+
+      // mo vs indirectos
+      this.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS =
+        this.variablesIndirectas.total_indirectos_usd /
+        this.datosInternos.COTIZACION_INTERNA_MANO_OBRA;
     },
 
     cargaJustificacionPartner() {
