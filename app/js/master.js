@@ -244,7 +244,6 @@ var app = new Vue({
         const element = this.listaDeMateriales[index];
         element.margen_individual = this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL;
       }
-      this.actualizaEstado();
     },
 
     // Flujo para generar las cotizaciones
@@ -278,6 +277,8 @@ var app = new Vue({
           );
           // Coloco el ID del reporte Cotizador como el # de cotizacion
           this.datosInternos.DETALLES_NOMBRE_COTIZACION = this.DatosCotizador.ID;
+          this.datosInternos.DETALLES_ATENCION = this.DatosCotizador.Nombre_ejecutivo;
+          this.datosInternos.DETALLES_PUESTO = this.DatosCotizador.Cargo_del_ejecutivo;
         });
       });
     },
@@ -413,7 +414,6 @@ var app = new Vue({
             objetoMiscelaneos.cantidad_de_piezas = 1;
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
-            this.actualizaEstado();
           }
         );
       });
@@ -1060,11 +1060,14 @@ var app = new Vue({
         };
 
         //update record API
-        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+        ZOHO.CREATOR.API.updateRecord(config).then((response) => {
           //callback block
           console.log(response);
-          if (response.code == 300) {
+          if (response.code == 3000) {
             alert("Guardado con exito.");
+            this.DatosCotizador.this.DatosCotizador.aprobada_por_SuperU = true;
+          } else {
+            alert("Ocurrió un error en servidor, intenta de nuevo");
           }
         });
       });
