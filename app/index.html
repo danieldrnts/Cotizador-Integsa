@@ -12,7 +12,7 @@
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
-          <div v-if="showModal"  class="modal" style="display:block" >
+          <!-- <div v-if="showModal"  class="modal" style="display:block" >
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -26,7 +26,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         
       </div>
@@ -176,15 +176,15 @@
                       <p class="h4 " :class="{'text-success': datosInternos.UTILIDAD_PORCENTAJE > 25 , 'text-danger': datosInternos.UTILIDAD_PORCENTAJE < 25 } " > {{datosInternos.UTILIDAD_PORCENTAJE}} %</p>
                     </div>
                     <div class="col-3">
-                      <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      <!-- <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <p v-if="DatosCotizador.aprobada_por_SuperU == 'false' || DatosCotizador.aprobada_por_SuperU == false " >Aprobar cotizacion</p>
                         <p v-else >Cotizacion ya aprobada.</p>
-                      </button>
+                      </button> -->
                     </div>
                     <div class="col-3">
-                      <!-- <div @click="descargaExcel" class="btn btn-success">
+                      <div @click="descargaExcel" class="btn btn-success">
                         DESCARGA EXCEL
-                      </div> -->
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -607,6 +607,11 @@
 
 <!-- Axios CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+
+<!-- EXCELJS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.0/exceljs.min.js" integrity="sha512-3ZnqnLCRnyAXG2Hbb0v+DNzl5QYyRocJeG7Uwy5qBausA0jB5cLSZ4gHWHkbINJIyWU3vApjCwH1rNO4XEn9SQ==" crossorigin="anonymous"></script>
+<!-- FILESAVER CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous"></script>
 
 
 <!-- MASTER JS CON TODA LA LOGICA -->

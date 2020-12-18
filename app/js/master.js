@@ -2,6 +2,7 @@ var app = new Vue({
   el: "#app",
   data() {
     return {
+      showTable: false,
       showModal: false,
       // Variable para determinar en qué paso de la cotización me encuentro.
       page: 1,
@@ -118,7 +119,6 @@ var app = new Vue({
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
       },
-      showTable: false,
       listaDeMateriales: [
         {
           // NUEVAS VARIABLES
@@ -200,14 +200,65 @@ var app = new Vue({
 
   methods: {
     descargaExcel() {
+      // debugger;
       // instancia de workbook
+      let dataVar = this.$data;
       const workbook = new ExcelJS.Workbook();
-      workbook.creator = "Me";
-      workbook.lastModifiedBy = "Her";
-      workbook.created = new Date(1985, 8, 30);
+      workbook.created = new Date();
       workbook.modified = new Date();
-      workbook.lastPrinted = new Date(2016, 9, 27);
-      console.log(workbook);
+      const worksheet = workbook.addWorksheet("Principal", {});
+      worksheet.columns = [
+        { font: { bold: true }, width: 30 },
+        { width: 30 },
+        { width: 30 },
+      ];
+      // Add a couple of Rows by key-value, after the last current row, using the column keys
+      for (const key in dataVar) {
+        if (key == "listaDeMateriales") continue;
+        if (`${dataVar[key]}` == "[object Object]") {
+          let flag = 0;
+          for (const innerKey in dataVar[key]) {
+            if (flag == 0) {
+              flag = 1;
+              worksheet.addRow([
+                `${key}`,
+                `${innerKey}`,
+                `${dataVar[key][innerKey]}`,
+              ]);
+            } else {
+              worksheet.addRow([
+                "",
+                `${innerKey}`,
+                `${dataVar[key][innerKey]}`,
+              ]);
+            }
+          }
+        } else {
+          worksheet.addRow([`${key}`, `${dataVar[key]}`]);
+        }
+      }
+
+      const matSheet = workbook.addWorksheet("Lista de Materiales", {});
+      matSheet.columns = [{ width: 30 }, { width: 30 }, { width: 30 }];
+      this.listaDeMateriales.forEach(function (item, index) {
+        flag = 0;
+        for (const key in item) {
+          if (flag == 0) {
+            flag = 1;
+            matSheet.addRow([`${index}`, `${key}`, `${item[key]}`]);
+          } else {
+            matSheet.addRow(["", `${key}`, `${item[key]}`]);
+          }
+        }
+      });
+
+      workbook.xlsx.writeBuffer().then(function (data) {
+        var blob = new Blob([data], {
+          type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, "fileName.xlsx");
+      });
     },
 
     testerFunc() {},
@@ -270,10 +321,12 @@ var app = new Vue({
           this.DatosCotizador = response.data;
           //           console.log(response.data);
           // 3. get lista de materiales
-          this.getMateriales(this.DatosCotizador.lista_de_materiales);
+          // this.getMateriales(this.DatosCotizador.lista_de_materiales);
+          this.getMateriales(this.DatosCotizador.id_lista_materiales);
           // $. get Datos del proyecto
           this.getDatosCotizacionInterna(
-            this.DatosCotizador.ID_DATOS_COTIZADOR
+            // this.DatosCotizador.ID_DATOS_COTIZADOR
+            this.DatosCotizador.nombre_de_cotizacion
           );
           // Coloco el ID del reporte Cotizador como el # de cotizacion
           this.datosInternos.DETALLES_NOMBRE_COTIZACION = this.DatosCotizador.ID;
@@ -299,6 +352,7 @@ var app = new Vue({
           // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
           // this.datosInternos.MES_UNI_TECNICO = 12000;
 
+          this.DatosCotizador.Duraci_n_del_proyecto = this.datosInternos.Duraci_n_del_proyecto;
           this.variablesIndirectas.viaticos = parseInt(
             this.datosInternos.VARIABLE_INDIRECTA_VIATICOS
           );
@@ -352,6 +406,7 @@ var app = new Vue({
       var lista_de_materiales_config = {
         reportName: "Lista_de_Materiales_Report",
         criteria: `(ID == ${BigInt(ID_materiales)})`,
+        // criteria: `(nombre_clave_lista_materiales == ${ID_materiales})`,
         page: 1,
         pageSize: 10,
       };
@@ -1011,7 +1066,8 @@ var app = new Vue({
       let filePartner = this.$refs.filePartner.files[0];
 
       var config = {
-        reportName: "Datos_Cotizador_Report",
+        // reportName: "Datos_Cotizador_Report",
+        reportName: "Cotizador2_Report",
         id: this.datosInternos.ID,
         fieldName: "Propuesta_Word",
         file: filePartner,
@@ -1041,37 +1097,38 @@ var app = new Vue({
       // });
     },
 
-    aprobarCotizacion() {
-      // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
-      //   .aprobada_por_SuperU;
+    // aprobarCotizacion() {
+    //   // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
+    //   //   .aprobada_por_SuperU;
 
-      formData = {
-        data: {
-          aprobada_por_SuperU: "true",
-        },
-      };
+    //   formData = {
+    //     data: {
+    //       fecha_aprobada: `${Date.now()}`,
+    //       aprobada_por_SuperU: "true",
+    //     },
+    //   };
 
-      ZOHO.CREATOR.init().then((data) => {
-        var config = {
-          reportName: "Cotizador2_Report",
-          // Aqui el error es el id
-          id: `${this.DatosCotizador.ID}`,
-          data: formData,
-        };
+    //   ZOHO.CREATOR.init().then((data) => {
+    //     var config = {
+    //       reportName: "Cotizador2_Report",
+    //       // Aqui el error es el id
+    //       id: `${this.DatosCotizador.ID}`,
+    //       data: formData,
+    //     };
 
-        //update record API
-        ZOHO.CREATOR.API.updateRecord(config).then((response) => {
-          //callback block
-          console.log(response);
-          if (response.code == 3000) {
-            alert("Guardado con exito.");
-            this.DatosCotizador.this.DatosCotizador.aprobada_por_SuperU = true;
-          } else {
-            alert("Ocurrió un error en servidor, intenta de nuevo");
-          }
-        });
-      });
-    },
+    //     //update record API
+    //     ZOHO.CREATOR.API.updateRecord(config).then((response) => {
+    //       //callback block
+    //       console.log(response);
+    //       if (response.code == 3000) {
+    //         alert("Guardado con exito.");
+    //         this.DatosCotizador.aprobada_por_SuperU = true;
+    //       } else {
+    //         alert("Ocurrió un error en servidor, intenta de nuevo");
+    //       }
+    //     });
+    //   });
+    // },
   },
   mounted() {
     // this.calculaTotalCostoeImporte();
