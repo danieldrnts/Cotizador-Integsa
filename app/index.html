@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html >
 
 <head>
   <meta charset="UTF-8" />
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://cdnjs.cloudflare.com "> -->
 </head>
 
-<body>
-  <div id="app">
-    <div style="height: 100em" class="container-fluid">
+<body style="min-height: 5000em;"  >
+  <div id="app"   >
+    <div  class="container-fluid">
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
@@ -38,7 +38,7 @@
           </button>
         </div>
         <div class="col-8">
-          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="#">
               <img style="height: 6em" src="https://firebasestorage.googleapis.com/v0/b/drntss.appspot.com/o/intega_logo.png?alt=media&token=40cdc5b8-4c78-427a-954d-5556bed09262"
                 alt="integsa-logo" class="img-thumbnail">
@@ -70,7 +70,7 @@
                       <th scope="col">
                         ${{variablesIndirectas.total_indirectos_usd}}
                       </th>
-                      <th scope="col">${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS}}
+                      <th scope="col">${{ parseInt(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS).toFixed(2) }}
                       </th>
                       <th scope="col"> MO vs Indirectos</th>
                     </tr>
@@ -80,14 +80,14 @@
                       <th scope="row">PROYECTO</th>
                       <td>{{DatosCotizador.proyectos}}</td>
                       <td>MATERIALES</td>
-                      <td>${{datosInternos.COTIZACION_INTERNA_MATERIALES}}</td>
+                      <td>${{ parseInt(datosInternos.COTIZACION_INTERNA_MATERIALES).toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <th scope="row">COTIZACIÓN #</th>
                       <td>{{datosInternos.ID}}</td>
                       <td>MANO DE OBRA</td>
-                      <td>${{datosInternos.COTIZACION_INTERNA_MANO_OBRA }}</td>
-                      <td>${{datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES }}</td>
+                      <td>${{ parseInt(datosInternos.COTIZACION_INTERNA_MANO_OBRA).toFixed(2) }}</td>
+                      <td>${{ parseInt(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES).toFixed(2) }}</td>
                       <td>MO vs Mat.</td>
                     </tr>
                     <tr>
@@ -173,7 +173,7 @@
                       <!-- <button @click="flujoGeneral" class="btn btn-primary" > Flujo</button> -->
                     </div>
                     <div class="col-3 px-1">
-                      <p class="h4 " :class="{'text-success': datosInternos.UTILIDAD_PORCENTAJE > 25 , 'text-danger': datosInternos.UTILIDAD_PORCENTAJE < 25 } " > {{datosInternos.UTILIDAD_PORCENTAJE}} %</p>
+                      <p class="h4 " :class="{'text-success': datosInternos.UTILIDAD_PORCENTAJE > 25 , 'text-danger': datosInternos.UTILIDAD_PORCENTAJE < 25 } " > {{datosInternos.UTILIDAD_PORCENTAJE.toFixed(2)}} %</p>
                     </div>
                     <div class="col-3">
                       <!-- <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -237,10 +237,10 @@
                       </td>
                       <td>{{material.unidad}}</td>
                       <td>{{material.descripcion}}</td>
-                      <td>${{material.precio_lista}}</td>
-                      <td>${{material.importe}} </td>
-                      <td>${{material.costo_u}}</th>
-                      <td>${{material.costo_total}}</td>
+                      <td>${{material.precio_lista.toFixed(2)}}</td>
+                      <td>${{material.importe.toFixed(2)}} </td>
+                      <td>${{material.costo_u.toFixed(2)}}</th>
+                      <td>${{material.costo_total.toFixed(2)}}</td>
                       <td :class="{ 'table-warning' : material.margen_individual > 25, 'table-danger' : material.margen_individual <= 24 }">
                         <input  @change="flujoGeneral" class="form-control" style="width: 5em;"  :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
                           value="material.margen_individual" >
@@ -257,9 +257,9 @@
                       <td></td>
                       <td></td>
                       <td>Total</td>
-                      <td class="table-info">$ {{datosInternos.DETALLES_TOTAL_COTIZACION}}</td>
+                      <td class="table-info">$ {{datosInternos.DETALLES_TOTAL_COTIZACION.toFixed(2)}}</td>
                       <td></td>
-                      <td class="table-success">$ {{datosInternos.COTIZACION_INTERNA_TOTAL}}</td>
+                      <td class="table-success">$ {{datosInternos.COTIZACION_INTERNA_TOTAL.toFixed(2)}}</td>
                       <td></td>
                     </tr>
                     <tr>
@@ -267,7 +267,7 @@
                         </th>
                       <td></td>
                       <td>Utilidad</td>
-                      <td class="table-success">${{datosInternos.COTIZACION_INTERNA_UTILIDAD}}</td>
+                      <td class="table-success">${{datosInternos.COTIZACION_INTERNA_UTILIDAD.toFixed(2)}}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -315,7 +315,7 @@
                     </tr>
                     <tr class="table-info" >
                       <td>Mano de Obra</td>
-                      <td>$ {{datosInternos.DETALLES_TOTAL_COTA_MAYOR}} </td>
+                      <td>$ {{ parseInt(datosInternos.DETALLES_TOTAL_COTA_MAYOR).toFixed(2) }} </td>
                     </tr>
                   </tbody>
                 </table>
@@ -366,9 +366,9 @@
                         $ {{datosInternos.MES_UNI_SUPERVISOR}} MXN
                       </td>
                       <td  > 
-                        $ {{datosInternos.DIARIO_UNI_SUPERVISOR }}
+                        $ {{datosInternos.DIARIO_UNI_SUPERVISOR.toFixed(2) }}
                       </td>
-                      <td>$ {{datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR }}</td>
+                      <td>$ {{datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR.toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <td>Técnico</td>
@@ -379,13 +379,13 @@
                         $ {{datosInternos.MES_UNI_TECNICO}} MXN
                       </td>
                       <td>
-                        $ {{datosInternos.DIARIO_UNI_TECNICO  }}
+                        $ {{datosInternos.DIARIO_UNI_TECNICO.toFixed(2)  }}
                       </td>
-                      <td> $ {{datosInternos.TOTAL_COSTO_DIARIO_TECNICO}}</td>
+                      <td> $ {{datosInternos.TOTAL_COSTO_DIARIO_TECNICO.toFixed(2)}}</td>
                     </tr>
                     <tr>
                       <td colspan="4" ></td>
-                      <td>$ {{total_costo_diario_local }}</td>
+                      <td>$ {{total_costo_diario_local.toFixed(2) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -402,8 +402,8 @@
                   <tbody>
                     <tr>
                       
-                      <td>$ {{this.datosInternos.MO_FLAT_MXN }}</td>
-                      <td>$ {{this.datosInternos.MO_CON_IMPUESTOS }}</td>
+                      <td>$ {{this.datosInternos.MO_FLAT_MXN.toFixed(2) }}</td>
+                      <td>$ {{this.datosInternos.MO_CON_IMPUESTOS.toFixed(2) }}</td>
                     </tr>
                     
                   </tbody>
@@ -540,11 +540,11 @@
                       <td class="table-success" scope="row"><span class="font-weight-bold">Calculo de MO (sin margen)</span></td>
                     </tr>
                     <tr>
-                      <th class="table-success" scope="row">$ {{this.datosInternos.MO  }}</th>
+                      <th class="table-success" scope="row">$ {{this.datosInternos.MO.toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-success" scope="row">$ {{this.datosInternos.MO / variablesIndirectas.tipo_cambio  }}</th>
+                      <th class="table-success" scope="row">$ {{ parseInt(this.datosInternos.MO / variablesIndirectas.tipo_cambio).toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
@@ -557,11 +557,11 @@
                       <td class="table-info" scope="row"><span class="font-weight-bold">Calculo de MO (con margen)</span> </td>
                     </tr>
                     <tr>
-                      <th class="table-info" scope="row">$ {{this.datosInternos.MO_CON_MARGEN }}</th>
+                      <th class="table-info" scope="row">$ {{this.datosInternos.MO_CON_MARGEN.toFixed(2) }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-info" scope="row">$ {{ this.datosInternos.MO_CON_MARGEN / variablesIndirectas.tipo_cambio}}</th>
+                      <th class="table-info" scope="row">$ {{ parseInt(this.datosInternos.MO_CON_MARGEN / variablesIndirectas.tipo_cambio).toFixed(2) }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
@@ -574,11 +574,11 @@
                       <td class="table-warning" scope="row"> <span class="font-weight-bold">Calculo de Cota Mayor</span> </td>
                     </tr>
                     <tr>
-                      <th class="table-warning" scope="row">$ {{ datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN   }}</th>
+                      <th class="table-warning" scope="row">$ {{ parseInt(datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN).toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-warning" scope="row">$ {{datosInternos.DETALLES_TOTAL_COTA_MAYOR }}</th>
+                      <th class="table-warning" scope="row">$ {{ parseInt(datosInternos.DETALLES_TOTAL_COTA_MAYOR).toFixed(2) }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
@@ -590,6 +590,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </body>
 

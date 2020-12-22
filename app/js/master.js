@@ -533,14 +533,20 @@ var app = new Vue({
           DIARIO_UNI_TECNICO: `${this.datosInternos.DIARIO_UNI_TECNICO}`,
           MES_UNI_SUPERVISOR: `${this.datosInternos.MES_UNI_SUPERVISOR}`,
           MES_UNI_TECNICO: `${this.datosInternos.MES_UNI_TECNICO}`,
-          TOTAL_COSTO_DIARIO_SUPERVISOR: `${this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR}`,
-          TOTAL_COSTO_DIARIO_TECNICO: `${this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO}`,
+          TOTAL_COSTO_DIARIO_SUPERVISOR: `${this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR.toFixed(
+            2
+          )}`,
+          TOTAL_COSTO_DIARIO_TECNICO: `${this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO.toFixed(
+            2
+          )}`,
           TOTAL_COSTO_AMBOS: `${this.datosInternos.TOTAL_COSTO_AMBOS}`,
-          MO_FLAT_MXN: `${this.datosInternos.MO_FLAT_MXN}`,
-          MO_CON_IMPUESTOS: `${this.datosInternos.MO_CON_IMPUESTOS}`,
-          MO: `${this.datosInternos.MO}`,
-          MO_CON_MARGEN: `${this.datosInternos.MO_CON_MARGEN}`,
-          MO_CON_MARGEN_MXN: `${this.datosInternos.MO_CON_MARGEN_MXN}`,
+          MO_FLAT_MXN: `${this.datosInternos.MO_FLAT_MXN.toFixed(2)}`,
+          MO_CON_IMPUESTOS: `${this.datosInternos.MO_CON_IMPUESTOS.toFixed(2)}`,
+          MO: `${this.datosInternos.MO.toFixed(2)}`,
+          MO_CON_MARGEN: `${this.datosInternos.MO_CON_MARGEN.toFixed(2)}`,
+          MO_CON_MARGEN_MXN: `${this.datosInternos.MO_CON_MARGEN_MXN.toFixed(
+            2
+          )}`,
           VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
           VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
           VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
@@ -1079,22 +1085,23 @@ var app = new Vue({
     },
 
     descargarFile() {
-      // $.ajax({
-      //   url:
-      //     "https://creator.zoho.com/api/v2/integsa/superappintegsa/report/Datos_Cotizador_Report/3405770000000423002/Propuesta_Word/download",
-      //   type: "GET",
-      //   beforeSend: function (xhr) {
-      //     xhr.setRequestHeader(
-      //       "Authorization",
-      //       "Zoho-oauthtoken 1000.f6f8f7eb4b7e40de93202334cb593e65.19f24d7a8b54df30c6ed6949e3a12fc4"
-      //     );
-      //   },
-      //   success: function (data) {
-      //     // alert(data);
-      //     console.log(data);
-      //     //process the JSON data etc
-      //   },
-      // });
+      $.ajax({
+        url:
+          "https://creator.zoho.com/api/v2/integsa/superappintegsa/report/Datos_Cotizador_Report/3405770000000423002/Propuesta_Word/download",
+        type: "GET",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader(
+            "auth_connection",
+            "Zoho-oauthtoken 1000.f6f8f7eb4b7e40de93202334cb593e65.19f24d7a8b54df30c6ed6949e3a12fc4"
+          );
+        },
+
+        success: function (data) {
+          // alert(data);
+          console.log(data);
+          //process the JSON data etc
+        },
+      });
     },
 
     // aprobarCotizacion() {
