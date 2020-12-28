@@ -2,6 +2,9 @@ var app = new Vue({
   el: "#app",
   data() {
     return {
+      errorParsing: false,
+      indexMateriales: 0,
+      materialesMargenCantidad: [],
       showTable: false,
       showModal: false,
       // Variable para determinar en qué paso de la cotización me encuentro.
@@ -200,7 +203,7 @@ var app = new Vue({
 
   methods: {
     descargaExcel() {
-      // debugger;
+      // // debugger;
       // instancia de workbook
       let dataVar = this.$data;
       const workbook = new ExcelJS.Workbook();
@@ -237,7 +240,6 @@ var app = new Vue({
           worksheet.addRow([`${key}`, `${dataVar[key]}`]);
         }
       }
-
       const matSheet = workbook.addWorksheet("Lista de Materiales", {});
       matSheet.columns = [{ width: 30 }, { width: 30 }, { width: 30 }];
       this.listaDeMateriales.forEach(function (item, index) {
@@ -251,7 +253,6 @@ var app = new Vue({
           }
         }
       });
-
       workbook.xlsx.writeBuffer().then(function (data) {
         var blob = new Blob([data], {
           type:
@@ -260,8 +261,6 @@ var app = new Vue({
         saveAs(blob, "fileName.xlsx");
       });
     },
-
-    testerFunc() {},
 
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
@@ -320,14 +319,13 @@ var app = new Vue({
           //callback block
           this.DatosCotizador = response.data;
           //           console.log(response.data);
-          // 3. get lista de materiales
-          // this.getMateriales(this.DatosCotizador.lista_de_materiales);
-          this.getMateriales(this.DatosCotizador.id_lista_materiales);
-          // $. get Datos del proyecto
+          // 3. get Datos del proyecto
           this.getDatosCotizacionInterna(
             // this.DatosCotizador.ID_DATOS_COTIZADOR
             this.DatosCotizador.nombre_de_cotizacion
           );
+          // 4. get lista de materiales
+          this.getMateriales(this.DatosCotizador.id_lista_materiales);
           // Coloco el ID del reporte Cotizador como el # de cotizacion
           this.datosInternos.DETALLES_NOMBRE_COTIZACION = this.DatosCotizador.ID;
           this.datosInternos.DETALLES_ATENCION = this.DatosCotizador.Nombre_ejecutivo;
@@ -347,7 +345,22 @@ var app = new Vue({
         };
 
         ZOHO.CREATOR.API.getAllRecords(proyectoconfig).then((response) => {
-          //           console.log(response.data);
+          // console.log(response.data[0]);
+
+          try {
+            this.materialesMargenCantidad = JSON.parse(
+              response.data[0].Datos_json
+            );
+          } catch (e) {
+            this.errorParsing = true;
+          }
+
+          //           if( = JSON.parse(
+          //             response.data[0].Datos_json
+          //           ) ==){
+
+          //           }
+
           this.datosInternos = response.data[0];
           // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
           // this.datosInternos.MES_UNI_TECNICO = 12000;
@@ -394,48 +407,18 @@ var app = new Vue({
           this.variablesIndirectas.precioPartner = parseInt(
             this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER
           );
-          this.flujoGeneral();
-          this.showTable = !this.showTable;
-        });
-      });
-    },
 
-    getMateriales(ID_materiales) {
-      this.listaDeMateriales = [];
-      // Config file to get materiales
-      var lista_de_materiales_config = {
-        reportName: "Lista_de_Materiales_Report",
-        criteria: `(ID == ${BigInt(ID_materiales)})`,
-        // criteria: `(nombre_clave_lista_materiales == ${ID_materiales})`,
-        page: 1,
-        pageSize: 10,
-      };
+          setTimeout(() => {
+            if (!this.errorParsing) {
+              this.listaDeMateriales.forEach((element) => {
+                let match = this.materialesMargenCantidad.filter((obj) => {
+                  return obj.descripcion == element.descripcion;
+                });
+                element.cantidad_de_piezas = parseInt(match[0].piezas);
+                element.margen_individual = parseFloat(match[0].margen);
+              });
+            }
 
-      ZOHO.CREATOR.init().then((data) => {
-        ZOHO.CREATOR.API.getAllRecords(lista_de_materiales_config).then(
-          (response) => {
-            // console.log(response.data);
-            response.data[0].SubForm.forEach((element) => {
-              let splittedMaterial = element.display_value.split("?=");
-              let objetoMaterial = {};
-              objetoMaterial.unidad = splittedMaterial[0];
-              objetoMaterial.descripcion = splittedMaterial[1];
-              objetoMaterial.precio_lista = parseInt(splittedMaterial[2]);
-              objetoMaterial.costo_unidad = parseInt(splittedMaterial[3]);
-              objetoMaterial.costo_instalacion = parseInt(splittedMaterial[4]);
-              objetoMaterial.pv_sugerido = parseInt(splittedMaterial[5]);
-              // aqui vale pondra el id del material entonces nuevo los indices en 1
-              objetoMaterial.costo_u = parseInt(splittedMaterial[7]);
-              objetoMaterial.costo_total = parseInt(splittedMaterial[8]);
-              objetoMaterial.margen_individual = parseInt(splittedMaterial[9]);
-              objetoMaterial.pv_unitario = parseInt(splittedMaterial[10]);
-              objetoMaterial.pv_total = parseInt(splittedMaterial[11]);
-              objetoMaterial.cantidad_de_piezas = parseInt(
-                splittedMaterial[12]
-              );
-              objetoMaterial.importe = parseInt(splittedMaterial[13]);
-              this.listaDeMateriales.push(objetoMaterial);
-            });
             let objetoMO = {};
             objetoMO.unidad = "Srv.";
             objetoMO.descripcion = "INSTALACIÓN Y PUESTA EN OPERACIÓN";
@@ -443,7 +426,6 @@ var app = new Vue({
             objetoMO.costo_unidad = 0;
             objetoMO.costo_instalacion = 0;
             objetoMO.pv_sugerido = 0;
-            // aqui vale pondra el id del material entonces nuevo los indices en 1
             objetoMO.costo_u = 0;
             objetoMO.costo_total = 0;
             objetoMO.margen_individual = 0;
@@ -469,12 +451,134 @@ var app = new Vue({
             objetoMiscelaneos.cantidad_de_piezas = 1;
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
+
+            this.flujoGeneral();
+            this.showTable = !this.showTable;
+          }, 5000);
+        });
+      });
+    },
+
+    getMateriales(ID_materiales) {
+      this.listaDeMateriales = [];
+      // Config file to get materiales
+      var lista_de_materiales_config = {
+        reportName: "Lista_de_Materiales_Report",
+        criteria: `(ID == ${BigInt(ID_materiales)})`,
+        // criteria: `(nombre_clave_lista_materiales == ${ID_materiales})`,
+        page: 1,
+        pageSize: 10,
+      };
+
+      ZOHO.CREATOR.init().then((data) => {
+        ZOHO.CREATOR.API.getAllRecords(lista_de_materiales_config).then(
+          async (response) => {
+            // Declaro variables
+            let materialesIDS = [];
+            let promesasDeMateriales = [];
+
+            // Funcion para traer un material por id
+            let getMaterialIndividual = (id) => {
+              let config = {
+                reportName: "Materiales_Report",
+                criteria: `nombre == "${id}"`,
+                page: "1",
+                pageSize: "1",
+              };
+              ZOHO.CREATOR.API.getAllRecords(config).then((response) => {
+                // console.log(response.data[0]);
+                let tempObjetoMaterial = {};
+                tempObjetoMaterial.unidad = response.data[0].unidad;
+                tempObjetoMaterial.descripcion = response.data[0].nombre;
+                tempObjetoMaterial.precio_lista = parseFloat(
+                  response.data[0].precio_lista
+                );
+                tempObjetoMaterial.costo_unidad = parseFloat(
+                  response.data[0].Costo_Unitario
+                );
+                tempObjetoMaterial.costo_instalacion = parseFloat(
+                  response.data[0].COSTO_INSTALACION_UNIDAD
+                );
+                tempObjetoMaterial.pv_sugerido = parseFloat(
+                  response.data[0].precio_venta
+                );
+                tempObjetoMaterial.costo_u = tempObjetoMaterial.costo_unidad;
+                tempObjetoMaterial.costo_total = 1;
+                tempObjetoMaterial.pv_unitario = parseFloat(
+                  response.data[0].precio_lista
+                );
+                tempObjetoMaterial.pv_total = 1;
+                tempObjetoMaterial.importe = 0;
+
+                tempObjetoMaterial.cantidad_de_piezas = 1;
+                tempObjetoMaterial.margen_individual = 0;
+                this.listaDeMateriales.push(tempObjetoMaterial);
+              });
+            };
+
+            // array de promesas
+            response.data[0].agregar_material.forEach((element) => {
+              materialesIDS.push(element.display_value);
+            });
+
+            materialesIDS.map((idm) => {
+              promesasDeMateriales.push(getMaterialIndividual(idm));
+            });
+
+            await Promise.all(promesasDeMateriales)
+              .then(() => {
+                console.log(this.listaDeMateriales);
+              })
+              .catch((e) => {
+                console.log(`Error in ${e}`);
+                alert("Ocurrió un error del servidor.");
+              });
+
+            // // console.log(response.data);
+            // response.data[0].SubForm.forEach((element) => {
+            //   let splittedMaterial = element.display_value.split("?=");
+            //   let objetoMaterial = {};
+            //   objetoMaterial.unidad = splittedMaterial[0];
+            //   objetoMaterial.descripcion = splittedMaterial[1];
+            //   objetoMaterial.precio_lista = parseInt(splittedMaterial[2]);
+            //   objetoMaterial.costo_unidad = parseInt(splittedMaterial[3]);
+            //   objetoMaterial.costo_instalacion = parseInt(splittedMaterial[4]);
+            //   objetoMaterial.pv_sugerido = parseInt(splittedMaterial[5]);
+            //   // aqui vale pondra el id del material entonces nuevo los indices en 1
+            //   objetoMaterial.costo_u = parseInt(splittedMaterial[7]);
+            //   objetoMaterial.costo_total = parseInt(splittedMaterial[8]);
+            //   objetoMaterial.margen_individual = parseInt(splittedMaterial[9]);
+            //   objetoMaterial.pv_unitario = parseInt(splittedMaterial[10]);
+            //   objetoMaterial.pv_total = parseInt(splittedMaterial[11]);
+            //   objetoMaterial.cantidad_de_piezas = parseInt(
+            //     splittedMaterial[12]
+            //   );
+            //   objetoMaterial.importe = parseInt(splittedMaterial[13]);
+            //   this.listaDeMateriales.push(objetoMaterial);
+            // });
           }
         );
       });
     },
 
+    getJsonMateriales() {
+      let materialesValores = [];
+
+      for (let index = 0; index < this.listaDeMateriales.length - 2; index++) {
+        const element = this.listaDeMateriales[index];
+        let materialTemp = {};
+        materialTemp.descripcion = element.descripcion;
+        materialTemp.piezas = element.cantidad_de_piezas;
+        materialTemp.margen = element.margen_individual;
+        materialesValores.push(materialTemp);
+      }
+
+      return JSON.stringify(materialesValores);
+    },
+
     updateField() {
+      this.datosInternos.Datos_json = this.getJsonMateriales();
+
       this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO = this.variablesIndirectas.tipo_cambio;
       this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR = this.variablesIndirectas.margen_a_aplicar;
       this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO = this.variablesIndirectas.miscelaneosMonto;
@@ -494,18 +598,29 @@ var app = new Vue({
 
       formData = {
         // RENOMBRAR COTIZACIO INTERNA TOTAL A SUMA DE COSTOS TOTALES
+
         // renombrar DETALLES_TOTAL_COTIZACION a suma de importes total
         data: {
           DETALLES_NUMERO_PAGINAS: `${this.datosInternos.DETALLES_NUMERO_PAGINAS}`,
-          COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS}`,
+          COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS
+          ).toFixed(2)}`,
           ID_DATOS_COTIZADOR_REPORT: `${this.datosInternos.ID_DATOS_COTIZADOR_REPORT}`,
-          COTIZACION_INTERNA_UTILIDAD: `${this.datosInternos.COTIZACION_INTERNA_UTILIDAD}`,
-          DETALLES_TOTAL_COTA_MAYOR: `${this.datosInternos.DETALLES_TOTAL_COTA_MAYOR}`,
-          DETALLES_TOTAL_COTIZACION: `${this.datosInternos.DETALLES_TOTAL_COTIZACION}`,
+          COTIZACION_INTERNA_UTILIDAD: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_UTILIDAD
+          ).toFixed(2)}`,
+          DETALLES_TOTAL_COTA_MAYOR: `${parseFloat(
+            this.datosInternos.DETALLES_TOTAL_COTA_MAYOR
+          ).toFixed(2)}`,
+          DETALLES_TOTAL_COTIZACION: `${parseFloat(
+            this.datosInternos.DETALLES_TOTAL_COTIZACION
+          ).toFixed(2)}`,
           ID: `${this.datosInternos.ID}`,
           DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
           DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
-          COTIZACION_INTERNA_MANO_OBRA: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA}`,
+          COTIZACION_INTERNA_MANO_OBRA: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_MANO_OBRA
+          ).toFixed(2)}`,
           DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
           ID_COTIZACION: `${this.datosInternos.ID_COTIZACION}`,
           DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
@@ -514,39 +629,69 @@ var app = new Vue({
           DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
           DETALLES_NOMBRE_COTIZACION: `${this.datosInternos.DETALLES_NOMBRE_COTIZACION}`,
           DETALLES_TIPO_MONEDA: `${this.datosInternos.DETALLES_TIPO_MONEDA}`,
-          COTIZACION_INTERNA_INDIRECTOS: `${this.datosInternos.COTIZACION_INTERNA_INDIRECTOS}`,
-          COTIZACION_INTERNA_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MATERIALES}`,
-          COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}`,
-          COTIZACION_INTERNA_PV_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_PV_GLOBAL}`,
-          COTIZACION_INTERNA_COSTO_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_COSTO_GLOBAL}`,
-          COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
+          COTIZACION_INTERNA_INDIRECTOS: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_INDIRECTOS
+          ).toFixed(2)}`,
+          COTIZACION_INTERNA_MATERIALES: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_MATERIALES
+          ).toFixed(2)}`,
+          COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES
+          ).toFixed(2)}`,
+          COTIZACION_INTERNA_PV_GLOBAL: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_PV_GLOBAL
+          ).toFixed(2)}`,
+          COTIZACION_INTERNA_COSTO_GLOBAL: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_COSTO_GLOBAL
+          ).toFixed(2)}`,
+          COTIZACION_INTERNA_MARGEN_GLOBAL: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL
+          ).toFixed(2)}`,
           DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
           DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
           DETALLES_LUGAR_ENTREGA: `${this.datosInternos.DETALLES_LUGAR_ENTREGA}`,
-          COTIZACION_INTERNA_TOTAL: `${this.datosInternos.COTIZACION_INTERNA_TOTAL}`,
-          UTILIDAD_PORCENTAJE: `${this.datosInternos.UTILIDAD_PORCENTAJE}`,
-          IMPORTE_MO: `${this.datosInternos.IMPORTE_MO}`,
-          INDIRECTOS_USD: `${this.datosInternos.INDIRECTOS_USD}`,
+          COTIZACION_INTERNA_TOTAL: `${parseFloat(
+            this.datosInternos.COTIZACION_INTERNA_TOTAL
+          ).toFixed(2)}`,
+          UTILIDAD_PORCENTAJE: `${parseFloat(
+            this.datosInternos.UTILIDAD_PORCENTAJE
+          ).toFixed(2)}`,
+          IMPORTE_MO: `${parseFloat(this.datosInternos.IMPORTE_MO).toFixed(2)}`,
+          INDIRECTOS_USD: `${parseFloat(
+            this.datosInternos.INDIRECTOS_USD
+          ).toFixed(2)}`,
           CUANTOS_SUPERVISOR: `${this.datosInternos.CUANTOS_SUPERVISOR}`,
           CUANTOS_TECNICO: `${this.datosInternos.CUANTOS_TECNICO}`,
-          DIARIO_UNI_SUPERVISOR: `${this.datosInternos.DIARIO_UNI_SUPERVISOR}`,
-          DIARIO_UNI_TECNICO: `${this.datosInternos.DIARIO_UNI_TECNICO}`,
+          DIARIO_UNI_SUPERVISOR: `${parseFloat(
+            this.datosInternos.DIARIO_UNI_SUPERVISOR
+          ).toFixed(2)}`,
+          DIARIO_UNI_TECNICO: `${parseFloat(
+            this.datosInternos.DIARIO_UNI_TECNICO
+          ).toFixed(2)}`,
           MES_UNI_SUPERVISOR: `${this.datosInternos.MES_UNI_SUPERVISOR}`,
           MES_UNI_TECNICO: `${this.datosInternos.MES_UNI_TECNICO}`,
-          TOTAL_COSTO_DIARIO_SUPERVISOR: `${this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR.toFixed(
+          TOTAL_COSTO_DIARIO_SUPERVISOR: `${parseFloat(
+            this.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR
+          ).toFixed(2)}`,
+          TOTAL_COSTO_DIARIO_TECNICO: `${parseFloat(
+            this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO
+          ).toFixed(2)}`,
+          TOTAL_COSTO_AMBOS: `${parseFloat(
+            this.datosInternos.TOTAL_COSTO_AMBOS
+          ).toFixed(2)}`,
+          MO_FLAT_MXN: `${parseFloat(this.datosInternos.MO_FLAT_MXN).toFixed(
             2
           )}`,
-          TOTAL_COSTO_DIARIO_TECNICO: `${this.datosInternos.TOTAL_COSTO_DIARIO_TECNICO.toFixed(
-            2
-          )}`,
-          TOTAL_COSTO_AMBOS: `${this.datosInternos.TOTAL_COSTO_AMBOS}`,
-          MO_FLAT_MXN: `${this.datosInternos.MO_FLAT_MXN.toFixed(2)}`,
-          MO_CON_IMPUESTOS: `${this.datosInternos.MO_CON_IMPUESTOS.toFixed(2)}`,
-          MO: `${this.datosInternos.MO.toFixed(2)}`,
-          MO_CON_MARGEN: `${this.datosInternos.MO_CON_MARGEN.toFixed(2)}`,
-          MO_CON_MARGEN_MXN: `${this.datosInternos.MO_CON_MARGEN_MXN.toFixed(
-            2
-          )}`,
+          MO_CON_IMPUESTOS: `${parseFloat(
+            this.datosInternos.MO_CON_IMPUESTOS
+          ).toFixed(2)}`,
+          MO: `${parseFloat(this.datosInternos.MO).toFixed(2)}`,
+          MO_CON_MARGEN: `${parseFloat(
+            this.datosInternos.MO_CON_MARGEN
+          ).toFixed(2)}`,
+          MO_CON_MARGEN_MXN: `${parseFloat(
+            this.datosInternos.MO_CON_MARGEN_MXN
+          ).toFixed(2)}`,
           VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
           VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
           VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
@@ -555,13 +700,14 @@ var app = new Vue({
           VARIABLE_INDIRECTA_HERRAMIENTAS: `${this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS}`,
           VARIABLE_INDIRECTA_SCANNER: `${this.datosInternos.VARIABLE_INDIRECTA_SCANNER}`,
           VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
-          VARIABLE_INDIRECTA_USO_VEHICULO: `${this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO}`,
+          // VARIABLE_INDIRECTA_USO_VEHICULO: `${this.datosInternos.VARIABLE_INDIRECTA_USO_VEHICULO}`,
           VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
           VARIABLE_INDIRECTA_TIPO_CAMBIO: `${this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO}`,
           VARIABLE_INDIRECTA_MARGEN_APLICAR: `${this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR}`,
           VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
           VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
           VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
+          Datos_json: `${this.datosInternos.Datos_json}`,
         },
       };
 
@@ -1055,12 +1201,12 @@ var app = new Vue({
       this.datosInternos.COTIZACION_INTERNA_MATERIALES =
         this.datosInternos.DETALLES_TOTAL_COTIZACION - localInstalacion.importe;
       // MO vs materiales
-      this.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES =
-        this.datosInternos.COTIZACION_INTERNA_MANO_OBRAtotal_indirectos_usd /
+      this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES =
+        this.variablesIndirectas.total_indirectos_usd /
         this.datosInternos.COTIZACION_INTERNA_MATERIALES;
 
       // mo vs indirectos
-      this.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS =
+      this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS =
         this.variablesIndirectas.total_indirectos_usd /
         this.datosInternos.COTIZACION_INTERNA_MANO_OBRA;
     },
@@ -1074,13 +1220,17 @@ var app = new Vue({
       var config = {
         // reportName: "Datos_Cotizador_Report",
         reportName: "Cotizador2_Report",
-        id: this.datosInternos.ID,
+        id: this.DatosCotizador.ID,
         fieldName: "Propuesta_Word",
         file: filePartner,
       };
 
       ZOHO.CREATOR.API.uploadFile(config).then(function (response) {
-        console.log("File uploaded successfully");
+        if (response.code == 3000) {
+          alert("Archivo cargado exitosamente");
+        } else {
+          alert("Ocurrió un error en servidor, intenta de nuevo.");
+        }
       });
     },
 
@@ -1098,7 +1248,7 @@ var app = new Vue({
 
         success: function (data) {
           // alert(data);
-          console.log(data);
+          // console.log(data);
           //process the JSON data etc
         },
       });
