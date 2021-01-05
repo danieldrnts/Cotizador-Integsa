@@ -9,6 +9,7 @@
 <body style="min-height: 5000em;"  >
   <div id="app"   >
     <div  class="container-fluid">
+      
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
@@ -37,6 +38,7 @@
             Genera tablas de cotización
           </button>
         </div>
+        
         <div class="col-8">
           <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="#">
@@ -53,6 +55,44 @@
           </nav>
         </div>
       </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ...
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-show="cargandoMateriales" class="pt-5 mt-5 col-12 ">
+          <div class="d-flex justify-content-center ">
+            <div class="container">
+              <div class="row ">
+                <div class="col-12 d-flex justify-content-center">
+                  <p class="h3">Cargando materiales... </p> <br>
+                </div>
+              </div>
+              <div class="row py-5">
+                <div class="col-12 d-flex justify-content-center">
+                  <div class="spinner-grow text-primary" role="status">
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="row">
         <!-- FORMATO DE REVISION -->
@@ -60,7 +100,7 @@
           <div class="container-fluid">
             <!-- Tabla de fechas -->
             <div class="row pt-5 ">
-              <div class="col-8 ">
+                <div class="col-8 ">
                 <table v-if="showTable" class="table table-bordered table-sm small ">
                   <thead>
                     <tr>
@@ -257,9 +297,9 @@
                       <td></td>
                       <td></td>
                       <td>Total</td>
-                      <td class="table-info">$ {{parseFloat(datosInternos.DETALLES_TOTAL_COTIZACION).toFixed(2)}}</td>
+                      <td class="table-info">$ {{parseFloat(datosInternos.SUMA_IMPORTES_TOTALES).toFixed(2)}}</td>
                       <td></td>
-                      <td class="table-success">$ {{parseFloat(datosInternos.COTIZACION_INTERNA_TOTAL).toFixed(2)}}</td>
+                      <td class="table-success">$ {{parseFloat(datosInternos.SUMA_COSTOS_TOTALES).toFixed(2)}}</td>
                       <td></td>
                     </tr>
                     <tr>
@@ -363,7 +403,7 @@
                         <input @change="flujoGeneral"  v-model="datosInternos.CUANTOS_SUPERVISOR" type="number" class="form-control" >
                       </td>
                       <td>
-                        $ {{datosInternos.MES_UNI_SUPERVISOR}} MXN
+                        $ {{ parseFloat(datosInternos.MES_UNI_SUPERVISOR).toFixed(2)}} MXN
                       </td>
                       <td  > 
                         $ {{datosInternos.DIARIO_UNI_SUPERVISOR.toFixed(2) }}
@@ -376,7 +416,7 @@
                         <input  @change="flujoGeneral" v-model="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
                       </td>
                       <td>
-                        $ {{datosInternos.MES_UNI_TECNICO}} MXN
+                        $ {{ parseFloat(datosInternos.MES_UNI_TECNICO).toFixed(2) }} MXN
                       </td>
                       <td>
                         $ {{datosInternos.DIARIO_UNI_TECNICO.toFixed(2)  }}
@@ -594,6 +634,7 @@
   </div>
 </body>
 
+
 <!-- CDN DE VUE -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
 <script src="https://unpkg.com/vue-router@2.0.0"></script>
@@ -611,6 +652,9 @@
 
 <!-- EXCELJS CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.0/exceljs.min.js" integrity="sha512-3ZnqnLCRnyAXG2Hbb0v+DNzl5QYyRocJeG7Uwy5qBausA0jB5cLSZ4gHWHkbINJIyWU3vApjCwH1rNO4XEn9SQ==" crossorigin="anonymous"></script>
+
+<!-- CDN del loader -->
+<script src="https://cdn.jsdelivr.net/npm/vuejs-loading-plugin@1.0.51/index.min.js"></script>
 <!-- FILESAVER CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous"></script>
 
