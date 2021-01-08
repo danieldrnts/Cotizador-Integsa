@@ -7,10 +7,6 @@ var app = new Vue({
       errorParsing: false,
       indexMateriales: 0,
       materialesMargenCantidad: [],
-<<<<<<< Updated upstream
-=======
-      showTable: true,
->>>>>>> Stashed changes
       showModal: false,
       // Variable para determinar en qué paso de la cotización me encuentro.
       page: 1,
@@ -207,7 +203,6 @@ var app = new Vue({
 
   methods: {
     descargaExcel() {
-      debugger;
       // instancia de workbook
       let dataVar = this.$data;
       const workbook = new ExcelJS.Workbook();
@@ -521,25 +516,6 @@ var app = new Vue({
                  name: 'Arial',
       };
     },
-    /*
-    costo_por_pieza_comprada: 10.5,
-          // NUEVAS VARIABLES
-          costo_instalacion: 10,
-          costo_total: 0,
-          costo_u: 49.85,
-          costo_unidad: 0,
-          descripcion:
-            "ORGANIZADOR HORIZONTAL VELOCITY SENCILLO 19 1UR 13930-701",
-          margen_individual: 0,
-          precio_lista: 0,
-          pv_total: 0,
-          pv_unitario: 68.29,
-          unidad: "Pzas. ",
-          pv_sugerido: 10.5,
-          cantidad_de_piezas: 22,
-          importe: 0,
-
-          */
     // coloca los valores de la mano de otra en la lista de materiales
     setManoObraneMateriales() {
       elementoMO = this.listaDeMateriales[this.listaDeMateriales.length - 1];
