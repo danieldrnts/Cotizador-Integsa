@@ -96,7 +96,7 @@ var app = new Vue({
         COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS: 0,
         // ID_DATOS_COTIZADOR_REPORT: `ID_DATOS_COTIZADOR_REPORT}`,
         COTIZACION_INTERNA_UTILIDAD: 0,
-        DETALLES_TOTAL_COTA_MAYOR: 0,
+        DETALLES_TOTAL_COTA_MAYOR_USD: 0,
         DETALLES_TOTAL_COTA_MAYOR_MXN: 0,
         // Cambiar nombre a DETALLES_IMPORTE_TOTAL
         SUMA_IMPORTES_TOTALES: 0,
@@ -221,132 +221,260 @@ var app = new Vue({
       });
     },
 
-    addMaterialList(workbook){
+    addMaterialList(workbook) {
       const matSheet = workbook.addWorksheet("Solicitud Materiales", {});
       matSheet.columns = [
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 60, style: { font: { name: 'Calibri',  size: 9} } }, 
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 60, style: { font: { name: "Calibri", size: 9 } } },
       ];
       let finalRowIndex = 0;
-      matSheet.insertRow(1, ["PARTIDA","CANTIDAD","UNIDADES","DESCRIPCIÓN"]);
+      matSheet.insertRow(1, ["PARTIDA", "CANTIDAD", "UNIDADES", "DESCRIPCIÓN"]);
       this.listaDeMateriales.forEach(function (item, index) {
-          finalRowIndex = index;
-          matSheet.insertRow(index + 2, [index + 1, item["cantidad_de_piezas"], item["unidad"], item["descripcion"]]);
+        finalRowIndex = index;
+        matSheet.insertRow(index + 2, [
+          index + 1,
+          item["cantidad_de_piezas"],
+          item["unidad"],
+          item["descripcion"],
+        ]);
       });
 
       matSheet.spliceRows(finalRowIndex + 1, 2, [], []);
       matSheet.spliceRows(1, 0, [], [], []);
       matSheet.spliceColumns(1, 0, []);
 
-      row = matSheet.getRow(4); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = matSheet.getRow(4);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
     },
 
-    addIntegsaSheet(workbook){
+    addIntegsaSheet(workbook) {
       const integsaSheet = workbook.addWorksheet("INTEGSA", {});
       integsaSheet.columns = [
-        { width: 15, style: { font: { name: 'Calibri',  size: 9} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 40, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 9} } }
+        { width: 15, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 40, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 9 } } },
       ];
-      integsaSheet.insertRow(7, ["Partida","Cantidad","Unidad","Descripción","COSTO U","COSTO TOTAL","MARGEN","PV UNI","PV TOTAL","PV SUGERIDO"]);
-      
+      integsaSheet.insertRow(7, [
+        "Partida",
+        "Cantidad",
+        "Unidad",
+        "Descripción",
+        "COSTO U",
+        "COSTO TOTAL",
+        "MARGEN",
+        "PV UNI",
+        "PV TOTAL",
+        "PV SUGERIDO",
+      ]);
+
       let finalRowIndex = 0;
       let pvGlobal = 0;
 
-
       this.listaDeMateriales.forEach(function (item, index) {
-          integsaSheet.insertRow(8 + index, [index + 1, item["cantidad_de_piezas"], item["unidad"], item["descripcion"], item["costo_u"], item["costo_total"], item["margen_individual"], item["pv_unitario"], item["pv_total"], item["pv_sugerido"]]);
-          finalRowIndex = index;
-          pvGlobal += item["pv_total"];
+        integsaSheet.insertRow(8 + index, [
+          index + 1,
+          item["cantidad_de_piezas"],
+          item["unidad"],
+          item["descripcion"],
+          item["costo_u"],
+          item["costo_total"],
+          item["margen_individual"],
+          item["pv_unitario"],
+          item["pv_total"],
+          item["pv_sugerido"],
+        ]);
+        finalRowIndex = index;
+        pvGlobal += item["pv_total"];
       });
       finalRowIndex += 8;
       let cotTot = this.$data.datosInternos.COTIZACION_INTERNA_TOTAL;
-      integsaSheet.getCell('F'+ (finalRowIndex + 1)).value = { formula: "=SUM(F8:F" + finalRowIndex + ")", result: cotTot };
-      integsaSheet.getCell('F'+ (finalRowIndex + 2)).value = "Costo Global";
-      integsaSheet.getCell('I'+ (finalRowIndex + 1)).value = { formula: "=SUM(I8:I" + finalRowIndex + ")", result: pvGlobal};
-      integsaSheet.getCell('I'+ (finalRowIndex + 2)).value = "PV Global";
-      integsaSheet.getCell('I'+ (finalRowIndex + 5)).value = { formula: '=I' + (finalRowIndex + 1) + '-F' + (finalRowIndex + 1), result: (pvGlobal - cotTot)};
-      integsaSheet.getCell('I'+ (finalRowIndex + 6)).value = "Utilidad";
-      integsaSheet.getCell('I'+ (finalRowIndex + 8)).value = { formula: '=I' + (finalRowIndex + 5) + '/I' + (finalRowIndex + 1), result: (pvGlobal - cotTot) / pvGlobal};
-      integsaSheet.getCell('I'+ (finalRowIndex + 9)).value = "PORCENTAJE UTILIDAD";
+      integsaSheet.getCell("F" + (finalRowIndex + 1)).value = {
+        formula: "=SUM(F8:F" + finalRowIndex + ")",
+        result: cotTot,
+      };
+      integsaSheet.getCell("F" + (finalRowIndex + 2)).value = "Costo Global";
+      integsaSheet.getCell("I" + (finalRowIndex + 1)).value = {
+        formula: "=SUM(I8:I" + finalRowIndex + ")",
+        result: pvGlobal,
+      };
+      integsaSheet.getCell("I" + (finalRowIndex + 2)).value = "PV Global";
+      integsaSheet.getCell("I" + (finalRowIndex + 5)).value = {
+        formula: "=I" + (finalRowIndex + 1) + "-F" + (finalRowIndex + 1),
+        result: pvGlobal - cotTot,
+      };
+      integsaSheet.getCell("I" + (finalRowIndex + 6)).value = "Utilidad";
+      integsaSheet.getCell("I" + (finalRowIndex + 8)).value = {
+        formula: "=I" + (finalRowIndex + 5) + "/I" + (finalRowIndex + 1),
+        result: (pvGlobal - cotTot) / pvGlobal,
+      };
+      integsaSheet.getCell("I" + (finalRowIndex + 9)).value =
+        "PORCENTAJE UTILIDAD";
 
-      integsaSheet.insertRow(1, ["Indirectos", this.$data.datosInternos.INDIRECTOS_USD, {formula: 'B1/B3', value: this.$data.datosInternos.INDIRECTOS_USD / this.$data.datosInternos.MO_CON_MARGEN}, "MO vs Ind"]);
-      integsaSheet.insertRow(2, ["Materiales", {formula: "=SUM(I8:I" + (finalRowIndex - 2) + ")" , value: this.$data.datosInternos.COTIZACION_INTERNA_MATERIALES}]);
-      integsaSheet.insertRow(3, ["Mano de Obra", {formula: 'I' + (finalRowIndex - 1), value: this.$data.datosInternos.MO_CON_MARGEN}]);
-      integsaSheet.insertRow(4, ["", {formula: "B3/B2", value: this.$data.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES}, "MO vs Mat"]);
-      integsaSheet.insertRow(5, ["MARGEN GLOBAL", this.$data.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL]);
-      
+      integsaSheet.insertRow(1, [
+        "Indirectos",
+        this.$data.datosInternos.INDIRECTOS_USD,
+        {
+          formula: "B1/B3",
+          value:
+            this.$data.datosInternos.INDIRECTOS_USD /
+            this.$data.datosInternos.MO_CON_MARGEN,
+        },
+        "MO vs Ind",
+      ]);
+      integsaSheet.insertRow(2, [
+        "Materiales",
+        {
+          formula: "=SUM(I8:I" + (finalRowIndex - 2) + ")",
+          value: this.$data.datosInternos.COTIZACION_INTERNA_MATERIALES,
+        },
+      ]);
+      integsaSheet.insertRow(3, [
+        "Mano de Obra",
+        {
+          formula: "I" + (finalRowIndex - 1),
+          value: this.$data.datosInternos.MO_CON_MARGEN,
+        },
+      ]);
+      integsaSheet.insertRow(4, [
+        "",
+        {
+          formula: "B3/B2",
+          value: this.$data.datosInternos
+            .COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES,
+        },
+        "MO vs Mat",
+      ]);
+      integsaSheet.insertRow(5, [
+        "MARGEN GLOBAL",
+        this.$data.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL,
+      ]);
+
       integsaSheet.spliceRows(6, 5);
 
-      row = integsaSheet.getRow(7); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = integsaSheet.getRow(7);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
-
     },
-    addClientSheet(workbook){
+    addClientSheet(workbook) {
       const clientSheet = workbook.addWorksheet("Cliente", {});
       clientSheet.columns = [
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } }, 
-        { width: 50, style: { font: { name: 'Calibri',  size: 6} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 6} } }, 
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 50, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 6 } } },
       ];
 
-      clientSheet.insertRow(1, ["","","","","FECHA:",this.$data.DatosCotizador.Fecha_de_expedici_n]);
-      clientSheet.insertRow(3, ["","","","","Proy:",this.$data.DatosCotizador.proyectos]);
-      clientSheet.insertRow(4, ["","","","","Cotización:","###"]);
+      clientSheet.insertRow(1, [
+        "",
+        "",
+        "",
+        "",
+        "FECHA:",
+        this.$data.DatosCotizador.Fecha_de_expedici_n,
+      ]);
+      clientSheet.insertRow(3, [
+        "",
+        "",
+        "",
+        "",
+        "Proy:",
+        this.$data.DatosCotizador.proyectos,
+      ]);
+      clientSheet.insertRow(4, ["", "", "", "", "Cotización:", "###"]);
 
-      clientSheet.mergeCells('A6:G6');
-      clientSheet.getCell('A6').value = 'CERRO DEL MERCADO # 4404 COLONIA MIRADOR, MONTERREY N.L. C.P. 64910 TEL +52(81)1100-1150, TEL +52(81)1100-2020';
-      clientSheet.getCell('A6').alignment = { horizontal:'center'} ;
+      clientSheet.mergeCells("A6:G6");
+      clientSheet.getCell("A6").value =
+        "CERRO DEL MERCADO # 4404 COLONIA MIRADOR, MONTERREY N.L. C.P. 64910 TEL +52(81)1100-1150, TEL +52(81)1100-2020";
+      clientSheet.getCell("A6").alignment = { horizontal: "center" };
 
-      clientSheet.insertRow(9, ["EMPRESA",this.$data.DatosCotizador.Cliente,"","","TIPO DE MONEDA:",this.$data.datosInternos.DETALLES_TIPO_MONEDA]);
-      clientSheet.mergeCells('B9:D9');
+      clientSheet.insertRow(9, [
+        "EMPRESA",
+        this.$data.DatosCotizador.Cliente,
+        "",
+        "",
+        "TIPO DE MONEDA:",
+        this.$data.datosInternos.DETALLES_TIPO_MONEDA,
+      ]);
+      clientSheet.mergeCells("B9:D9");
 
-      clientSheet.insertRow(10, ["ATENCION:",this.$data.DatosCotizador.Nombre_ejecutivo,"","","TIEMPO DE ENT.:","Ver Cond. Com."]);
-      clientSheet.mergeCells('B10:D10');
+      clientSheet.insertRow(10, [
+        "ATENCION:",
+        this.$data.DatosCotizador.Nombre_ejecutivo,
+        "",
+        "",
+        "TIEMPO DE ENT.:",
+        "Ver Cond. Com.",
+      ]);
+      clientSheet.mergeCells("B10:D10");
 
-      clientSheet.insertRow(11, ["PUESTO:",this.$data.DatosCotizador.Cargo_del_ejecutivo,"","","LUGAR DE ENTREGA:",this.$data.datosInternos.DETALLES_LUGAR_ENTREGA]);
-      clientSheet.mergeCells('B11:D11');
+      clientSheet.insertRow(11, [
+        "PUESTO:",
+        this.$data.DatosCotizador.Cargo_del_ejecutivo,
+        "",
+        "",
+        "LUGAR DE ENTREGA:",
+        this.$data.datosInternos.DETALLES_LUGAR_ENTREGA,
+      ]);
+      clientSheet.mergeCells("B11:D11");
 
-      clientSheet.insertRow(12, ["TELEFONOS:",this.$data.datosInternos.DETALLES_TELEFONOS,"",this.$data.DatosCotizador.nombre_de_cotizacion,"NUM. DE PARTIDAS:",this.$data.datosInternos.DETALLES_NUMERO_PARTIDAS]);
-      clientSheet.mergeCells('B12:C12');
+      clientSheet.insertRow(12, [
+        "TELEFONOS:",
+        this.$data.datosInternos.DETALLES_TELEFONOS,
+        "",
+        this.$data.DatosCotizador.nombre_de_cotizacion,
+        "NUM. DE PARTIDAS:",
+        this.$data.datosInternos.DETALLES_NUMERO_PARTIDAS,
+      ]);
+      clientSheet.mergeCells("B12:C12");
 
-      clientSheet.insertRow(13, ["FAX:",this.$data.datosInternos.DETALLES_FAX,"","","NUM. DE PAGINAS:",this.$data.datosInternos.DETALLES_NUMERO_PAGINAS]);
-      clientSheet.mergeCells('B13:C13');
+      clientSheet.insertRow(13, [
+        "FAX:",
+        this.$data.datosInternos.DETALLES_FAX,
+        "",
+        "",
+        "NUM. DE PAGINAS:",
+        this.$data.datosInternos.DETALLES_NUMERO_PAGINAS,
+      ]);
+      clientSheet.mergeCells("B13:C13");
 
-      clientSheet.insertRow(14, ["Partida","Cantidad","Unidad","Descripción","Precio Lista","Importe"]);
-      clientSheet.mergeCells('B14:C14');
+      clientSheet.insertRow(14, [
+        "Partida",
+        "Cantidad",
+        "Unidad",
+        "Descripción",
+        "Precio Lista",
+        "Importe",
+      ]);
+      clientSheet.mergeCells("B14:C14");
 
       clientSheet.insertRow(15, []);
       clientSheet.insertRow(16, []);
@@ -356,189 +484,310 @@ var app = new Vue({
       let finalRowIndex = 0;
       let pvGlobal = 0;
       this.listaDeMateriales.forEach(function (item, index) {
-          clientSheet.insertRow(19 + index, [index + 1, item["cantidad_de_piezas"], item["unidad"], item["descripcion"], item["pv_unitario"], item["pv_total"]]);
-          finalRowIndex = index;
-          pvGlobal += item["pv_total"];
+        clientSheet.insertRow(19 + index, [
+          index + 1,
+          item["cantidad_de_piezas"],
+          item["unidad"],
+          item["descripcion"],
+          item["pv_unitario"],
+          item["pv_total"],
+        ]);
+        finalRowIndex = index;
+        pvGlobal += item["pv_total"];
       });
 
       clientSheet.insertRow(18 + finalRowIndex, []);
-      clientSheet.insertRow(22 + finalRowIndex, ["","","","","TOTAL",{ formula: '=SUM(F19:F' + (finalRowIndex + 20) + ')', result: pvGlobal}]);
-  
+      clientSheet.insertRow(22 + finalRowIndex, [
+        "",
+        "",
+        "",
+        "",
+        "TOTAL",
+        {
+          formula: "=SUM(F19:F" + (finalRowIndex + 20) + ")",
+          result: pvGlobal,
+        },
+      ]);
 
-      row = clientSheet.getRow(14); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = clientSheet.getRow(14);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
-
     },
-    addManoObra(workbook){
+    addManoObra(workbook) {
       const manoSheet = workbook.addWorksheet("MANO DE OBRA", {});
       manoSheet.columns = [
-        { width: 5, style: { font: { name: 'Calibri',  size: 10} } },
-        { width: 20, style: { font: { name: 'Calibri',  size: 10} } },
-        { width: 10, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 10, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 20, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 15, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 2, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 15, style: { font: { name: 'Calibri',  size: 10} } }, 
-        { width: 15, style: { font: { name: 'Calibri',  size: 10} } }, 
+        { width: 5, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 20, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 10, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 20, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 15, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 2, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 15, style: { font: { name: "Calibri", size: 10 } } },
+        { width: 15, style: { font: { name: "Calibri", size: 10 } } },
       ];
 
-      manoSheet.insertRow(2, ["","FACTORES"]);
-      manoSheet.insertRow(3, ["","Días de trabajo",this.$data.DatosCotizador.Duraci_n_del_proyecto]);
-      
+      manoSheet.insertRow(2, ["", "FACTORES"]);
+      manoSheet.insertRow(3, [
+        "",
+        "Días de trabajo",
+        this.$data.DatosCotizador.Duraci_n_del_proyecto,
+      ]);
 
-      manoSheet.insertRow(6, ["","PERSONAL","CUANTOS","MES UNI", "DIARIO UNI", "TOT COSTO DIARIO","","MO Flat MX","MO con impuestos"]);
-      manoSheet.insertRow(7, ["","Supervisor",this.$data.datosInternos.CUANTOS_SUPERVISOR, this.$data.datosInternos.MES_UNI_SUPERVISOR, {formula: 'D7/30', result: this.$data.datosInternos.DIARIO_UNI_SUPERVISOR}, {formula: '=C7*E7', result: this.$data.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR},"",{formula: '=(C3*F9)',result: this.$data.datosInternos.MO_FLAT_MXN} ,{formula: '=H7*1.3',result: this.$data.datosInternos.MO_CON_IMPUESTOS}]);
-      manoSheet.insertRow(8, ["","Técnico",this.$data.datosInternos.CUANTOS_TECNICO, this.$data.datosInternos.MES_UNI_TECNICO, {formula: 'D8/30', result: this.$data.datosInternos.DIARIO_UNI_TECNICO}, {formula: '=C8*E8', result: this.$data.datosInternos.TOTAL_COSTO_DIARIO_TECNICO}]);
-      manoSheet.insertRow(9, ["","","","","",{formula: '=SUM(F7:F8)', result: this.$data.total_costo_diario_local}]);
+      manoSheet.insertRow(6, [
+        "",
+        "PERSONAL",
+        "CUANTOS",
+        "MES UNI",
+        "DIARIO UNI",
+        "TOT COSTO DIARIO",
+        "",
+        "MO Flat MX",
+        "MO con impuestos",
+      ]);
+      manoSheet.insertRow(7, [
+        "",
+        "Supervisor",
+        this.$data.datosInternos.CUANTOS_SUPERVISOR,
+        this.$data.datosInternos.MES_UNI_SUPERVISOR,
+        {
+          formula: "D7/30",
+          result: this.$data.datosInternos.DIARIO_UNI_SUPERVISOR,
+        },
+        {
+          formula: "=C7*E7",
+          result: this.$data.datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR,
+        },
+        "",
+        { formula: "=(C3*F9)", result: this.$data.datosInternos.MO_FLAT_MXN },
+        {
+          formula: "=H7*1.3",
+          result: this.$data.datosInternos.MO_CON_IMPUESTOS,
+        },
+      ]);
+      manoSheet.insertRow(8, [
+        "",
+        "Técnico",
+        this.$data.datosInternos.CUANTOS_TECNICO,
+        this.$data.datosInternos.MES_UNI_TECNICO,
+        {
+          formula: "D8/30",
+          result: this.$data.datosInternos.DIARIO_UNI_TECNICO,
+        },
+        {
+          formula: "=C8*E8",
+          result: this.$data.datosInternos.TOTAL_COSTO_DIARIO_TECNICO,
+        },
+      ]);
+      manoSheet.insertRow(9, [
+        "",
+        "",
+        "",
+        "",
+        "",
+        { formula: "=SUM(F7:F8)", result: this.$data.total_costo_diario_local },
+      ]);
 
-
-      manoSheet.insertRow(11, ["","VARIABLES/INDIRECTOS"]);
-      manoSheet.mergeCells('H7:H9');
-      manoSheet.mergeCells('I7:I9');
+      manoSheet.insertRow(11, ["", "VARIABLES/INDIRECTOS"]);
+      manoSheet.mergeCells("H7:H9");
+      manoSheet.mergeCells("I7:I9");
 
       let vi = this.$data.variablesIndirectas;
-      let horario_nocturno_total = this.$data.datosInternos.MO_CON_IMPUESTOS * vi.horario_nocturno;
-      let precio_gasolina_total = vi.precio_gasolina * vi.num_vueltas * vi.distancia * 2 / 7.5;
-      let herramientas_total = this.$data.datosInternos.MO_CON_IMPUESTOS * vi.herramientas;
-      let scanner_total = this.$data.datosInternos.MO_CON_IMPUESTOS * vi.scanner;
-      let proyecto_riesgozo_total = this.$data.datosInternos.MO_CON_IMPUESTOS * vi.scanner;
-      let tot_ind = horario_nocturno_total + precio_gasolina_total + herramientas_total + scanner_total + proyecto_riesgozo_total + vi.viaticos;
+      let horario_nocturno_total =
+        this.$data.datosInternos.MO_CON_IMPUESTOS * vi.horario_nocturno;
+      let precio_gasolina_total =
+        (vi.precio_gasolina * vi.num_vueltas * vi.distancia * 2) / 7.5;
+      let herramientas_total =
+        this.$data.datosInternos.MO_CON_IMPUESTOS * vi.herramientas;
+      let scanner_total =
+        this.$data.datosInternos.MO_CON_IMPUESTOS * vi.scanner;
+      let proyecto_riesgozo_total =
+        this.$data.datosInternos.MO_CON_IMPUESTOS * vi.scanner;
+      let tot_ind =
+        horario_nocturno_total +
+        precio_gasolina_total +
+        herramientas_total +
+        scanner_total +
+        proyecto_riesgozo_total +
+        vi.viaticos;
 
+      manoSheet.insertRow(12, [
+        "",
+        "Horario nocturno",
+        vi.horario_nocturno,
+        { formula: "=$I$7*C12", result: horario_nocturno_total },
+      ]);
+      manoSheet.insertRow(13, ["", "Distancia", vi.distancia]);
+      manoSheet.insertRow(14, ["", "Número de Vueltas", vi.num_vueltas]);
+      manoSheet.insertRow(15, [
+        "",
+        "Precio Gasolina",
+        vi.precio_gasolina,
+        { formula: "=C15*C14*2*C13/7.5", result: precio_gasolina_total },
+      ]);
+      manoSheet.insertRow(16, [
+        "",
+        "Herramientas",
+        vi.herramientas,
+        { formula: "=$I$7*C16", result: herramientas_total },
+      ]);
+      manoSheet.insertRow(17, [
+        "",
+        "Scanner",
+        vi.scanner,
+        { formula: "=$I$7*C17", result: scanner_total },
+      ]);
+      manoSheet.insertRow(18, ["", "Viáticos", "", vi.viaticos]);
+      manoSheet.insertRow(19, [
+        "",
+        "Riesgo",
+        vi.proyecto_riesgozo,
+        { formula: "=$I$7*C19", result: proyecto_riesgozo_total },
+      ]);
+      manoSheet.insertRow(20, [
+        "",
+        "",
+        "",
+        { formula: "SUM(D12:D19)", result: tot_ind },
+      ]);
 
-      manoSheet.insertRow(12, ["","Horario nocturno", vi.horario_nocturno, {formula: '=$I$7*C12',result: horario_nocturno_total}]);
-      manoSheet.insertRow(13, ["","Distancia", vi.distancia]);
-      manoSheet.insertRow(14, ["","Número de Vueltas", vi.num_vueltas]);
-      manoSheet.insertRow(15, ["","Precio Gasolina", vi.precio_gasolina, {formula: '=C15*C14*2*C13/7.5', result: precio_gasolina_total}]);
-      manoSheet.insertRow(16, ["","Herramientas", vi.herramientas, {formula: '=$I$7*C16', result: herramientas_total}]);
-      manoSheet.insertRow(17, ["","Scanner", vi.scanner, {formula: '=$I$7*C17', result: scanner_total}]);
-      manoSheet.insertRow(18, ["","Viáticos", "", vi.viaticos]);
-      manoSheet.insertRow(19, ["","Riesgo", vi.proyecto_riesgozo, {formula: '=$I$7*C19', result: proyecto_riesgozo_total}]);
-      manoSheet.insertRow(20, ["","", "", {formula: 'SUM(D12:D19)',result: tot_ind}]);
+      manoSheet.insertRow(24, ["", "TIPO DE CAMBIO", vi.tipo_cambio]);
+      manoSheet.insertRow(25, ["", "MARGEN A APLICAR", vi.margen_a_aplicar]);
+      manoSheet.insertRow(26, [
+        "",
+        "Cotización Partner (USD)",
+        vi.precioPartner,
+      ]);
 
+      manoSheet.insertRow(30, [
+        "",
+        "MO ( MO sin margen en MXN )",
+        "",
+        "MO (MO sin margen en USD)",
+      ]);
 
-      manoSheet.insertRow(24, ["","TIPO DE CAMBIO", vi.tipo_cambio]);
-      manoSheet.insertRow(25, ["","MARGEN A APLICAR", vi.margen_a_aplicar]);
-      manoSheet.insertRow(26, ["","Cotización Partner (USD)", vi.precioPartner]);
+      let MO_sin_margen =
+        this.$data.datosInternos.MO_CON_IMPUESTOS +
+        tot_ind +
+        vi.precioPartner / vi.tipo_cambio;
+      manoSheet.insertRow(31, [
+        "",
+        { formula: "I7+D20+C26/C24", result: MO_sin_margen },
+        "",
+        { formula: "B31/C24", result: MO_sin_margen / vi.tipo_cambio },
+      ]);
 
+      manoSheet.insertRow(32, [
+        "",
+        "MO (MO con margen en MXN)",
+        "",
+        "MO con margen (MO con margen en USD)",
+        "",
+        "",
+        "",
+        "MO COTA SUPERIOR",
+      ]);
+      manoSheet.insertRow(33, [
+        "",
+        {
+          formula: "B31*(1+C25)",
+          result: MO_sin_margen * (1 + vi.margen_a_aplicar),
+        },
+        "",
+        {
+          formula: "B33/C24",
+          result: (MO_sin_margen * (1 + vi.margen_a_aplicar)) / vi.tipo_cambio,
+        },
+        "",
+        "",
+        "",
+        this.$data.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD,
+      ]);
 
-      manoSheet.insertRow(30, ["","MO ( MO sin margen en MXN )","", "MO (MO sin margen en USD)"]);
-
-      let MO_sin_margen = this.$data.datosInternos.MO_CON_IMPUESTOS + tot_ind + vi.precioPartner / vi.tipo_cambio;
-      manoSheet.insertRow(31, ["",{formula: 'I7+D20+C26/C24',result: MO_sin_margen}, "" , {formula: 'B31/C24', result: MO_sin_margen / vi.tipo_cambio}]);
-    
-      manoSheet.insertRow(32, ["","MO (MO con margen en MXN)","", "MO con margen (MO con margen en USD)", "", "", "","MO COTA SUPERIOR" ]);
-      manoSheet.insertRow(33, ["",{formula: 'B31*(1+C25)',result: MO_sin_margen * (1 + vi.margen_a_aplicar)},"", {formula:'B33/C24', result: (MO_sin_margen * (1 + vi.margen_a_aplicar))/vi.tipo_cambio}, "", "", "", this.$data.datosInternos.DETALLES_TOTAL_COTA_MAYOR]);
-
-      row = manoSheet.getRow(2); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = manoSheet.getRow(2);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
 
-      row = manoSheet.getRow(6); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = manoSheet.getRow(6);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
 
-      row = manoSheet.getRow(11); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = manoSheet.getRow(11);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
 
-      row = manoSheet.getRow(30); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = manoSheet.getRow(30);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
 
-      row = manoSheet.getRow(32); 
-      row.eachCell( function(cell, colNumber){
-          if(cell.value){
-               row.getCell(colNumber).font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
-               };
-               row.getCell(colNumber).alignment = { horizontal:'center'}
-          }
+      row = manoSheet.getRow(32);
+      row.eachCell(function (cell, colNumber) {
+        if (cell.value) {
+          row.getCell(colNumber).font = {
+            bold: true,
+            size: 10,
+            name: "Arial",
+          };
+          row.getCell(colNumber).alignment = { horizontal: "center" };
+        }
       });
 
-
-      manoSheet.getCell('B24').font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
+      manoSheet.getCell("B24").font = {
+        bold: true,
+        size: 10,
+        name: "Arial",
       };
-      manoSheet.getCell('B25').font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
+      manoSheet.getCell("B25").font = {
+        bold: true,
+        size: 10,
+        name: "Arial",
       };
-      manoSheet.getCell('B26').font = {
-                 bold: true, 
-                 size: 10,
-                 name: 'Arial',
+      manoSheet.getCell("B26").font = {
+        bold: true,
+        size: 10,
+        name: "Arial",
       };
     },
-    // coloca los valores de la mano de otra en la lista de materiales
-    setManoObraneMateriales() {
-      elementoMO = this.listaDeMateriales[this.listaDeMateriales.length - 1];
-      elementoMO.importe = this.datosInternos.MO;
-      //       console.log(this.datosInternos.MO);
-      //       console.log(elementoMO);
-    },
-
-    // flujo
-    // actualizaEstado() {
-    //   this.getPrecioLista();
-    //   // Actualiza el total
-    //   this.calculaCostoTotalInterno();
-    //   this.getCostoTotal();
-    //   this.calculaMateriales();
-    //   this.getImporteTotal();
-    //   this.calculaCotaMayor();
-    //   this.cotaMayorMXN();
-    //   this.calcula_pv_total();
-    //   this.calculaMOvsMateriales();
-    //   this.getUtilidadPorcentaje();
-    //   this.calculaMOvsIndirectos();
-    // },
 
     setMargenGlobal() {
       for (let index = 0; index < this.listaDeMateriales.length - 2; index++) {
@@ -641,9 +890,17 @@ var app = new Vue({
             this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO
           );
 
-          this.variablesIndirectas.tipo_cambio = parseInt(
-            this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO
-          );
+          // Default si tipo de cambio no existe o es 0
+          if (
+            this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO == undefined ||
+            this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO <= 0
+          ) {
+            this.variablesIndirectas.tipo_cambio = 20;
+          } else {
+            this.variablesIndirectas.tipo_cambio = parseInt(
+              this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO
+            );
+          }
           this.variablesIndirectas.margen_a_aplicar = parseInt(
             this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR
           );
@@ -674,6 +931,7 @@ var app = new Vue({
 
             let objetoMO = {};
             objetoMO.unidad = "Srv.";
+            objetoMO.um = "Srv.";
             objetoMO.descripcion = "INSTALACIÓN Y PUESTA EN OPERACIÓN";
             objetoMO.precio_lista = 0;
             objetoMO.costo_unidad = 0;
@@ -690,6 +948,7 @@ var app = new Vue({
             //
             let objetoMiscelaneos = {};
             objetoMiscelaneos.unidad = "Srv.";
+            objetoMiscelaneos.um = "Srv.";
             objetoMiscelaneos.descripcion = "MISCELÁNEOS";
             objetoMiscelaneos.precio_lista = 0;
             objetoMiscelaneos.costo_unidad = 0;
@@ -705,6 +964,7 @@ var app = new Vue({
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
 
+            this.calculaCotaMayor();
             this.flujoGeneral();
             this.cargandoMateriales = false;
             this.showTable = !this.showTable;
@@ -743,6 +1003,7 @@ var app = new Vue({
                 // console.log(response.data[0]);
                 let tempObjetoMaterial = {};
                 tempObjetoMaterial.unidad = response.data[0].unidad;
+                tempObjetoMaterial.um = response.data[0].um;
                 tempObjetoMaterial.descripcion = response.data[0].nombre;
                 tempObjetoMaterial.precio_lista = parseFloat(
                   response.data[0].precio_lista
@@ -906,10 +1167,6 @@ var app = new Vue({
       });
     },
 
-    // segunda vista   ----------------------------------------------------------------------------
-
-    // tercera vista   ----------------------------------------------------------------------------
-
     // Flujo de calculo varibles
     // 1. Materiales
     flujoGeneral() {
@@ -942,6 +1199,15 @@ var app = new Vue({
       localMiscelaneos.costo_total = this.variablesIndirectas.miscelaneosMonto;
 
       // Mano de obra
+
+      if (
+        this.datosInternos.CUANTOS_SUPERVISOR < 0 ||
+        this.datosInternos.CUANTOS_TECNICO < 0
+      ) {
+        this.datosInternos.CUANTOS_SUPERVISOR < 0
+          ? (this.datosInternos.CUANTOS_SUPERVISOR = 0)
+          : (this.datosInternos.CUANTOS_TECNICO = 0);
+      }
       this.datosInternos.DIARIO_UNI_SUPERVISOR =
         this.datosInternos.MES_UNI_SUPERVISOR / 30;
 
@@ -1111,6 +1377,17 @@ var app = new Vue({
       });
     },
 
+    calculaCotaMayor() {
+      let count = 0;
+      this.listaDeMateriales.forEach((element) => {
+        count = count + parseFloat(element.costo_instalacion);
+      });
+      this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD = count;
+      this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN =
+        this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD *
+        this.variablesIndirectas.tipo_cambio;
+    },
+
     // aprobarCotizacion() {
     //   // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
     //   //   .aprobada_por_SuperU;
@@ -1145,13 +1422,9 @@ var app = new Vue({
     // },
   },
   mounted() {
-    // this.calculaTotalCostoeImporte();
-    // this.calculaCotaMayor();
-    // this.cotaMayorMXN();
-    // this.calcula_pv_total();
+    this.calculaCotaMayor();
   },
   created() {
-    this.$loading(true);
     ZOHO.CREATOR.init().then((data) => {
       // 1. Obtengo los parametros de la pagina. Solo el id del cotizador.
       let queryParams = ZOHO.CREATOR.UTIL.getQueryParams();

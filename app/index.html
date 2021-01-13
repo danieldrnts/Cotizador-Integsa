@@ -48,7 +48,7 @@
             <div v-if="showTable" class="collapse navbar-collapse">
               <div class="navbar-nav">
                 <a @click="page = 1" class="nav-link" :class="{ 'active' : page == 1}" href="#">Formato de Revisión</a>
-                <a @click="page = 2" v-show="false" class="nav-link" :class="{ 'active' : page == 2}" href="#">Cota Mayor</a>
+                <a @click="page = 2" class="nav-link" :class="{ 'active' : page == 2}" href="#">Cota Mayor</a>
                 <a @click="page = 3" class="nav-link" :class="{ 'active' : page == 3}" href="#">Mano de obra</a>
               </div>
             </div>
@@ -243,11 +243,12 @@
                       <th scope="col"></th>
                       <th scope="col"></th>
                       <th scope="col">CAMPO_MARGEN-GLOBAL</th>
-                      <th class="table-warning" class="form-control" style="width: 4em;" type="number"
-                      :class="{ 'table-warning' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL > 25, 'table-danger' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL <= 24 }" scope="col">
-                        <input @change="setMargenGlobal" style="width: 4em;"  
+                      <th class="table-warning" class="form-control" style="width: 5em;" 
+                      :class="{'table-danger' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL < 25 }" scope="col">
+                        <input @change="setMargenGlobal" style="width: 5em;"  
                           v-model="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
                           value="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
+                          type="number"
                           >
                         <span class="font-weight-bold">%</span> </th>
                       <th scope="col"></th>
@@ -259,7 +260,8 @@
                     <tr>
                       <td class="table-info">Partida</th>
                       <td class="table-info">Cantidad</td>
-                      <td class="table-info">Unidad</td>
+                      <!-- <td class="table-info">Unidad</td> -->
+                      <td class="table-info">UM</td>
                       <td class="table-info">Descripción</td>
                       <td class="table-info">Precio lista</td>
                       <td class="table-info">Importe</td>
@@ -275,14 +277,15 @@
                         <!-- <input  @change="actualizaEstado" min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" > -->
                         <input @change="flujoGeneral"  min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" >
                       </td>
-                      <td>{{material.unidad}}</td>
+                      <!-- <td>{{material.unidad}}</td> -->
+                      <td>{{material.um}}</td>
                       <td>{{material.descripcion}}</td>
                       <td>${{parseFloat(material.precio_lista).toFixed(2)}}</td>
                       <td>${{parseFloat(material.importe).toFixed(2)}} </td>
                       <td>${{parseFloat(material.costo_u).toFixed(2)}}</th>
                       <td>${{parseFloat(material.costo_total).toFixed(2)}}</td>
-                      <td :class="{ 'table-warning' : material.margen_individual > 25, 'table-danger' : material.margen_individual <= 24 }">
-                        <input  @change="flujoGeneral" class="form-control" style="width: 5em;"  :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
+                      <td class="table-warning" :class="{'table-danger' : material.margen_individual < 25 }">
+                        <input  @change="flujoGeneral" class="form-control" style="width: 5em;"  :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " v-model="material.margen_individual" type="number"
                           value="material.margen_individual" >
                           <!-- <input  class="form-control" style="width: 5em;" @change="actualizaEstado" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
                           value="material.margen_individual" > -->
@@ -355,7 +358,7 @@
                     </tr>
                     <tr class="table-info" >
                       <td>Mano de Obra</td>
-                      <td>$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR).toFixed(2) }} </td>
+                      <td>$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD).toFixed(2) }} </td>
                     </tr>
                   </tbody>
                 </table>
@@ -400,7 +403,7 @@
                     <tr>
                       <td>Supervisor</td>
                       <td class="table-info">
-                        <input @change="flujoGeneral"  v-model="datosInternos.CUANTOS_SUPERVISOR" type="number" class="form-control" >
+                        <input @change="flujoGeneral"  v-model.number="datosInternos.CUANTOS_SUPERVISOR" min="0" max="10000" type="number" class="form-control" >
                       </td>
                       <td>
                         $ {{ parseFloat(datosInternos.MES_UNI_SUPERVISOR).toFixed(2)}} MXN
@@ -413,7 +416,7 @@
                     <tr>
                       <td>Técnico</td>
                       <td class="table-info" >
-                        <input  @change="flujoGeneral" v-model="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
+                        <input  @change="flujoGeneral" v-model.number="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
                       </td>
                       <td>
                         $ {{ parseFloat(datosInternos.MES_UNI_TECNICO).toFixed(2) }} MXN
@@ -535,7 +538,7 @@
                         <div class="input-group py-3">
                           <div class="custom-file">
                             <input  @change="cargaJustificacionPartner" ref="filePartner" type="file" class="custom-file-input" id="inputFilePartner" >
-                            <label class="custom-file-label" for="inputFilePartner" >Eligue un archivo</label>
+                            <label class="custom-file-label" for="inputFilePartner" >Elige un archivo</label>
                           </div>
                         </div>
                        
@@ -607,7 +610,7 @@
                   </tbody>
                 </table>
               </div>
-              <div v-show="false" class="col-3">
+              <div class="col-3">
                 <table class="table table-sm">
                   <tbody>
                     <tr>
@@ -618,7 +621,7 @@
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-warning" scope="row">$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR).toFixed(2) }}</th>
+                      <th class="table-warning" scope="row">$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD).toFixed(2) }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
