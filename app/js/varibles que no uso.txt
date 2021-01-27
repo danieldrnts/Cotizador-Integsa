@@ -6,3 +6,24 @@ TOTAL_COSTO_AMBOS
 COTIZACION_INTERNA_INDIRECTOS
 COTIZACION_INTERNA_PV_GLOBAL
 COTIZACION_INTERNA_TOTAL
+
+
+
+
+
+
+
+NOTE - revisar en zoho: En tipo de cambio, que el estandar no sea infinity (0) 
+NOTE - revisar en zoho: Poner cota mayor
+En el cotizador, en lugar de usar unidad usar el campo UM
+
+
+
+
+
+FIXME - Problemas de cotizador
+
+    1. Es ineficiente hacer un http request por cada material. 
+    2. El nombre puede fallar si contiene muchos espacios en blanco.
+    3. this.$loading is not a function
+    4. Modular el Flujo General.
