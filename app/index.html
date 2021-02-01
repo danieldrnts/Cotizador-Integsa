@@ -274,8 +274,8 @@
                     <tr v-for="(material, index) in listaDeMateriales" >
                       <td>{{index + 1}}</th>
                       <td :class="{'table-danger' : material.cantidad_de_piezas < 1}" >
-                        <!-- <input  @change="actualizaEstado" min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" > -->
-                        <input @change="flujoGeneral"  min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" >
+                        <!-- <input @change="flujoGeneral"  min="0"  class="form-control" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.cantidad_de_piezas" > -->
+                        <input @change="flujoGeneral"  min="0"  class="form-control" disabled type="number" v-model="material.cantidad_de_piezas" >
                       </td>
                       <!-- <td>{{material.unidad}}</td> -->
                       <td>{{material.um}}</td>

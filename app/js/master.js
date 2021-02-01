@@ -33,7 +33,7 @@ var app = new Vue({
       },
       DatosCotizador: {
         aprobada_por_SuperU: false,
-        Cargo_del_ejecutivo: "Tortas y Boings Department",
+        Cargo_del_ejecutivo: "Tortas & Boings de mango Department",
         Cliente: "sd",
         Costo_final_partner: "0.00",
         Detalles_de_horas_extra: "Some text 2",
@@ -831,6 +831,7 @@ var app = new Vue({
       });
     },
 
+    // FIXME Primero, separar con el nuevo separador
     getDatosCotizacionInterna(ID_datos) {
       ZOHO.CREATOR.init().then((data) => {
         // 2. Obtengo los datos del proyecto de Cotizador
@@ -842,22 +843,6 @@ var app = new Vue({
         };
 
         ZOHO.CREATOR.API.getAllRecords(proyectoconfig).then((response) => {
-          // console.log(response.data[0]);
-
-          try {
-            this.materialesMargenCantidad = JSON.parse(
-              response.data[0].Datos_json
-            );
-          } catch (e) {
-            this.errorParsing = true;
-          }
-
-          //           if( = JSON.parse(
-          //             response.data[0].Datos_json
-          //           ) ==){
-
-          //           }
-
           this.datosInternos = response.data[0];
 
           // this.datosInternos.MES_UNI_SUPERVISOR = 16000;
@@ -919,16 +904,6 @@ var app = new Vue({
           this.datosInternos.DETALLES_PUESTO = this.DatosCotizador.Cargo_del_ejecutivo;
 
           setTimeout(() => {
-            if (!this.errorParsing) {
-              this.listaDeMateriales.forEach((element) => {
-                let match = this.materialesMargenCantidad.filter((obj) => {
-                  return obj.descripcion == element.descripcion;
-                });
-                element.cantidad_de_piezas = parseInt(match[0].piezas);
-                element.margen_individual = parseFloat(match[0].margen);
-              });
-            }
-
             let objetoMO = {};
             objetoMO.unidad = "Srv.";
             objetoMO.um = "Srv.";
@@ -968,7 +943,7 @@ var app = new Vue({
             this.flujoGeneral();
             this.cargandoMateriales = false;
             this.showTable = !this.showTable;
-          }, 5000);
+          }, 7000);
         });
       });
     },
@@ -992,48 +967,56 @@ var app = new Vue({
             let promesasDeMateriales = [];
 
             // Funcion para traer un material por id
-            let getMaterialIndividual = (id) => {
+            let getMaterialIndividual = (material) => {
               let config = {
                 reportName: "Materiales_Report",
-                criteria: `nombre == "${id}"`,
-                page: "1",
-                pageSize: "1",
+                id: material.id,
               };
-              ZOHO.CREATOR.API.getAllRecords(config).then((response) => {
+              ZOHO.CREATOR.API.getRecordById(config).then((response) => {
                 // console.log(response.data[0]);
                 let tempObjetoMaterial = {};
-                tempObjetoMaterial.unidad = response.data[0].unidad;
-                tempObjetoMaterial.um = response.data[0].um;
-                tempObjetoMaterial.descripcion = response.data[0].nombre;
+                tempObjetoMaterial.unidad = response.data.unidad;
+                tempObjetoMaterial.um = response.data.um;
+                tempObjetoMaterial.descripcion = response.data.nombre;
                 tempObjetoMaterial.precio_lista = parseFloat(
-                  response.data[0].precio_lista
+                  response.data.precio_lista
                 );
                 tempObjetoMaterial.costo_unidad = parseFloat(
-                  response.data[0].Costo_Unitario
+                  response.data.Costo_Unitario
                 );
                 tempObjetoMaterial.costo_instalacion = parseFloat(
-                  response.data[0].COSTO_INSTALACION_UNIDAD
+                  response.data.COSTO_INSTALACION_UNIDAD
                 );
                 tempObjetoMaterial.pv_sugerido = parseFloat(
-                  response.data[0].precio_venta
+                  response.data.precio_venta
                 );
                 tempObjetoMaterial.costo_u = tempObjetoMaterial.costo_unidad;
                 tempObjetoMaterial.costo_total = 1;
                 tempObjetoMaterial.pv_unitario = parseFloat(
-                  response.data[0].precio_lista
+                  response.data.precio_lista
                 );
                 tempObjetoMaterial.pv_total = 1;
                 tempObjetoMaterial.importe = 0;
 
-                tempObjetoMaterial.cantidad_de_piezas = 1;
-                tempObjetoMaterial.margen_individual = 0;
+                tempObjetoMaterial.cantidad_de_piezas = parseInt(
+                  material.cantidad
+                );
+                tempObjetoMaterial.margen_individual = parseFloat(
+                  material.margen_individual
+                );
                 this.listaDeMateriales.push(tempObjetoMaterial);
               });
             };
 
             // array de promesas
             response.data[0].agregar_material.forEach((element) => {
-              materialesIDS.push(element.display_value);
+              // NOTE el valor esta separado por __ y es, nombre, cantidad, margen i, id del material
+              let materialSeparado = element.display_value.split("__");
+              let materialTemporal = {};
+              materialTemporal.cantidad = materialSeparado[1];
+              materialTemporal.marge_individual = materialSeparado[2];
+              materialTemporal.id = materialSeparado[3];
+              materialesIDS.push(materialTemporal);
             });
 
             materialesIDS.map((idm) => {
