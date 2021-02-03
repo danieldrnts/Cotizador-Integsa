@@ -9,7 +9,7 @@
 <body style="min-height: 5000em;"  >
   <div id="app"   >
     <div  class="container-fluid">
-      
+      <div @click="tester" class="btn btn-primary">Tester</div>
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
@@ -290,7 +290,14 @@
                           <!-- <input  class="form-control" style="width: 5em;" @change="actualizaEstado" :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " type="number" v-model="material.margen_individual" type="number"
                           value="material.margen_individual" > -->
                         <span class="font-weight-bold">%</span> </td>
-                      <td>${{material.pv_sugerido}}</td>
+                      <td>
+                        <span v-if="material.pv_sugerido >= 0" >
+                          ${{material.pv_sugerido}}
+                        </span>
+                        <span v-else >
+                          No hay pv sugerido.
+                        </span>
+                      </td>
                     </tr>
                     <tr>
                       <td>
@@ -340,7 +347,7 @@
         <!-- COTA MAYOR-->
         <div v-if="page == 2" class="col-12">
           <div class="container-fluid">
-            <div class="row pt-5">w
+            <div class="row pt-5">
               <div  class="col-12 ">
                 <table class="table table-bordered">
                   <thead>
@@ -353,7 +360,13 @@
                   <tbody>
                     <tr v-for="material in listaDeMateriales"  >
                       <td>{{material.descripcion}}</td>
-                      <td>$ {{material.costo_instalacion}}</td>
+                      <td   ><span v-if="material.costo_instalacion >= 0" >
+                        $ {{material.costo_instalacion}}
+                      </span>
+                      <span v-else >
+                        No existe este dato.
+                      </span>
+                    </td>
                       <td>{{material.unidad}}</td>
                     </tr>
                     <tr class="table-info" >
@@ -507,22 +520,22 @@
                   </tbody>
                 </table>
               </div>
-              <div class="col-2"></div>
-              <div class="col-4">
+              <div class="col-1"></div>
+              <div class="col-5">
 
                 <div class="container-fluid">
                   <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 mt-2">
                       <p class="h3">Misceláneos</p>
                       <table class="table table-sm small table-bordered">
                         <tbody>
                           <tr>
                             <td>Misceláneos</td>
                             <td > <span class="font-weight-bolder" >$</span> </td> 
-                            <td style="width: 5em;"> <input @change="flujoGeneral"  v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 5em;" type="number" > </td>
+                            <td style="width: 7em;"> <input @change="flujoGeneral"  v-model="variablesIndirectas.miscelaneosMonto" class="form-control" style="width: 7em;" type="number" > </td>
                             <td colspan="2"> </td>
                             <td class="mx-auto"> %</td> 
-                            <td style="width: 5em;"> <input  @change="flujoGeneral" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 5em;" type="number"  > </td>
+                            <td style="width: 7em;"> <input  @change="flujoGeneral" v-model="variablesIndirectas.miscelaneosPorcentaje" class="form-control" style="width: 7em;" type="number"  > </td>
                           </tr>
                         </tbody>
                       </table>

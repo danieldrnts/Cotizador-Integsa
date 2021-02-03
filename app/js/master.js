@@ -202,6 +202,10 @@ var app = new Vue({
   },
 
   methods: {
+    tester() {
+      console.log(this.datosInternos);
+    },
+
     descargaExcel() {
       // instancia de workbook
       let dataVar = this.$data;
@@ -306,25 +310,21 @@ var app = new Vue({
       });
       finalRowIndex += 8;
       let cotTot = this.$data.datosInternos.COTIZACION_INTERNA_TOTAL;
-      integsaSheet.getCell("F" + (finalRowIndex + 1)).value = {
-        formula: "=SUM(F8:F" + finalRowIndex + ")",
-        result: cotTot,
-      };
+      integsaSheet.getCell(
+        "F" + (finalRowIndex + 1)
+      ).value = this.datosInternos.SUMA_IMPORTES_TOTALES;
       integsaSheet.getCell("F" + (finalRowIndex + 2)).value = "Costo Global";
-      integsaSheet.getCell("I" + (finalRowIndex + 1)).value = {
-        formula: "=SUM(I8:I" + finalRowIndex + ")",
-        result: pvGlobal,
-      };
+      integsaSheet.getCell(
+        "I" + (finalRowIndex + 1)
+      ).value = this.datosInternos.SUMA_COSTOS_TOTALES;
       integsaSheet.getCell("I" + (finalRowIndex + 2)).value = "PV Global";
-      integsaSheet.getCell("I" + (finalRowIndex + 5)).value = {
-        formula: "=I" + (finalRowIndex + 1) + "-F" + (finalRowIndex + 1),
-        result: pvGlobal - cotTot,
-      };
+      integsaSheet.getCell(
+        "I" + (finalRowIndex + 5)
+      ).value = this.datosInternos.COTIZACION_INTERNA_UTILIDAD;
       integsaSheet.getCell("I" + (finalRowIndex + 6)).value = "Utilidad";
-      integsaSheet.getCell("I" + (finalRowIndex + 8)).value = {
-        formula: "=I" + (finalRowIndex + 5) + "/I" + (finalRowIndex + 1),
-        result: (pvGlobal - cotTot) / pvGlobal,
-      };
+      integsaSheet.getCell(
+        "I" + (finalRowIndex + 8)
+      ).value = this.datosInternos.UTILIDAD_PORCENTAJE;
       integsaSheet.getCell("I" + (finalRowIndex + 9)).value =
         "PORCENTAJE UTILIDAD";
 
@@ -942,7 +942,8 @@ var app = new Vue({
             this.calculaCotaMayor();
             this.flujoGeneral();
             this.cargandoMateriales = false;
-            this.showTable = !this.showTable;
+            // this.showTable = !this.showTable;
+            this.showTable = true;
           }, 7000);
         });
       });
@@ -1014,7 +1015,7 @@ var app = new Vue({
               let materialSeparado = element.display_value.split("__");
               let materialTemporal = {};
               materialTemporal.cantidad = materialSeparado[1];
-              materialTemporal.marge_individual = materialSeparado[2];
+              materialTemporal.margen_individual = materialSeparado[2];
               materialTemporal.id = materialSeparado[3];
               materialesIDS.push(materialTemporal);
             });
@@ -1363,7 +1364,9 @@ var app = new Vue({
     calculaCotaMayor() {
       let count = 0;
       this.listaDeMateriales.forEach((element) => {
-        count = count + parseFloat(element.costo_instalacion);
+        if (element.costo_instalacion >= 0) {
+          count = count + parseFloat(element.costo_instalacion);
+        }
       });
       this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD = count;
       this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN =
