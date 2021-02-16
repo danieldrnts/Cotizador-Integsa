@@ -198,12 +198,44 @@ var app = new Vue({
           importe: 0,
         },
       ],
+      margenesCantidades: [],
     };
   },
 
   methods: {
+    // NOTE metodo para crear el formData utilizado para
+    // guardar la cantidad de materiales y el margen individual
+    setCantidadMargen(margenNuevo, indexMaterial) {
+      // modifico el material que necesito
+      this.margenesCantidades[indexMaterial].margen_individual = margenNuevo;
+      console.log(this.margenesCantidades);
+    },
+
     tester() {
-      console.log(this.datosInternos);
+      formData = {
+        data: {
+          agregar_material: this.margenesCantidades,
+        },
+      };
+
+      ZOHO.CREATOR.init().then((data) => {
+        var config = {
+          reportName: "Lista_de_Materiales_Report",
+          id: this.DatosCotizador.id_lista_materiales,
+          data: formData,
+        };
+
+        //update record API
+        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+          //callback block
+          console.log(response);
+          if (response.code == 3000) {
+            alert("Guardado con exito.");
+          } else {
+            alert("Error de servidor, intenta de nuevo.");
+          }
+        });
+      });
     },
 
     descargaExcel() {
@@ -803,6 +835,9 @@ var app = new Vue({
     // 4. Add user interaction with modified values.
 
     generaCotizacion() {
+      // Vacio la lista de materiales antes de llenarla.
+      this.listaDeMateriales = [];
+      this.margenesCantidades = [];
       this.cargandoMateriales = true;
       this.DatosCotizador = [];
       ZOHO.CREATOR.init().then((data) => {
@@ -831,7 +866,6 @@ var app = new Vue({
       });
     },
 
-    // FIXME Primero, separar con el nuevo separador
     getDatosCotizacionInterna(ID_datos) {
       ZOHO.CREATOR.init().then((data) => {
         // 2. Obtengo los datos del proyecto de Cotizador
@@ -903,160 +937,167 @@ var app = new Vue({
           this.datosInternos.DETALLES_ATENCION = this.DatosCotizador.Nombre_ejecutivo;
           this.datosInternos.DETALLES_PUESTO = this.DatosCotizador.Cargo_del_ejecutivo;
 
-          setTimeout(() => {
-            let objetoMO = {};
-            objetoMO.unidad = "Srv.";
-            objetoMO.um = "Srv.";
-            objetoMO.descripcion = "INSTALACIÓN Y PUESTA EN OPERACIÓN";
-            objetoMO.precio_lista = 0;
-            objetoMO.costo_unidad = 0;
-            objetoMO.costo_instalacion = 0;
-            objetoMO.pv_sugerido = 0;
-            objetoMO.costo_u = 0;
-            objetoMO.costo_total = 0;
-            objetoMO.margen_individual = 0;
-            objetoMO.pv_unitario = 0;
-            objetoMO.pv_total = 0;
-            objetoMO.cantidad_de_piezas = 1;
-            objetoMO.importe = 0;
-            this.listaDeMateriales.push(objetoMO);
-            //
-            let objetoMiscelaneos = {};
-            objetoMiscelaneos.unidad = "Srv.";
-            objetoMiscelaneos.um = "Srv.";
-            objetoMiscelaneos.descripcion = "MISCELÁNEOS";
-            objetoMiscelaneos.precio_lista = 0;
-            objetoMiscelaneos.costo_unidad = 0;
-            objetoMiscelaneos.costo_instalacion = 0;
-            objetoMiscelaneos.pv_sugerido = 0;
-            // aqui vale pondra el id del material entonces nuevo los indices en 1
-            objetoMiscelaneos.costo_u = 0;
-            objetoMiscelaneos.costo_total = 0;
-            objetoMiscelaneos.margen_individual = 0;
-            objetoMiscelaneos.pv_unitario = 0;
-            objetoMiscelaneos.pv_total = 0;
-            objetoMiscelaneos.cantidad_de_piezas = 1;
-            objetoMiscelaneos.importe = 0;
-            this.listaDeMateriales.push(objetoMiscelaneos);
+          // setTimeout(() => {
+          //   let objetoMO = {};
+          //   objetoMO.unidad = "Srv.";
+          //   objetoMO.um = "Srv.";
+          //   objetoMO.descripcion = "INSTALACIÓN Y PUESTA EN OPERACIÓN";
+          //   objetoMO.precio_lista = 0;
+          //   objetoMO.costo_unidad = 0;
+          //   objetoMO.costo_instalacion = 0;
+          //   objetoMO.pv_sugerido = 0;
+          //   objetoMO.costo_u = 0;
+          //   objetoMO.costo_total = 0;
+          //   objetoMO.margen_individual = 0;
+          //   objetoMO.pv_unitario = 0;
+          //   objetoMO.pv_total = 0;
+          //   objetoMO.cantidad_de_piezas = 1;
+          //   objetoMO.importe = 0;
+          //   this.listaDeMateriales.push(objetoMO);
+          //   //
+          //   let objetoMiscelaneos = {};
+          //   objetoMiscelaneos.unidad = "Srv.";
+          //   objetoMiscelaneos.um = "Srv.";
+          //   objetoMiscelaneos.descripcion = "MISCELÁNEOS";
+          //   objetoMiscelaneos.precio_lista = 0;
+          //   objetoMiscelaneos.costo_unidad = 0;
+          //   objetoMiscelaneos.costo_instalacion = 0;
+          //   objetoMiscelaneos.pv_sugerido = 0;
+          //   // aqui vale pondra el id del material entonces nuevo los indices en 1
+          //   objetoMiscelaneos.costo_u = 0;
+          //   objetoMiscelaneos.costo_total = 0;
+          //   objetoMiscelaneos.margen_individual = 0;
+          //   objetoMiscelaneos.pv_unitario = 0;
+          //   objetoMiscelaneos.pv_total = 0;
+          //   objetoMiscelaneos.cantidad_de_piezas = 1;
+          //   objetoMiscelaneos.importe = 0;
+          //   this.listaDeMateriales.push(objetoMiscelaneos);
 
-            this.calculaCotaMayor();
-            this.flujoGeneral();
-            this.cargandoMateriales = false;
-            // this.showTable = !this.showTable;
-            this.showTable = true;
-          }, 7000);
+          //   this.calculaCotaMayor();
+          //   this.flujoGeneral();
+          //   this.cargandoMateriales = false;
+          //   this.showTable = !this.showTable;
+          // }, 7000);
         });
       });
     },
 
     getMateriales(ID_materiales) {
-      this.listaDeMateriales = [];
-      // Config file to get materiales
-      var lista_de_materiales_config = {
-        reportName: "Lista_de_Materiales_Report",
-        criteria: `(ID == ${BigInt(ID_materiales)})`,
-        // criteria: `(nombre_clave_lista_materiales == ${ID_materiales})`,
-        page: 1,
-        pageSize: 10,
+      // NOTE 1ero obtengo la lista de los materiales con sus ids.
+      let getListaDeMateriales = new Promise((resolve, reject) => {
+        var lista_de_materiales_config = {
+          reportName: "Lista_de_Materiales_Report",
+          criteria: `(ID == ${BigInt(ID_materiales)})`,
+          // criteria: `(nombre_clave_lista_materiales == ${ID_materiales})`,
+          page: 1,
+          pageSize: 10,
+        };
+
+        ZOHO.CREATOR.init().then(() => {
+          ZOHO.CREATOR.API.getAllRecords(lista_de_materiales_config).then(
+            (response) => {
+              // if resolved
+              if (response.code === 3000) {
+                // Separo por id los materiales de la respuesta
+                let materialesIDS = [];
+                response.data[0].agregar_material.forEach((element) => {
+                  // NOTE el valor esta separado por __ y es, nombre, cantidad, margen i, id del material
+                  let materialSeparado = element.display_value.split("__");
+                  let materialTemporal = {};
+                  let auxMaterial = {};
+                  auxMaterial.Materiales = materialSeparado[3];
+                  auxMaterial.margen_individual = parseFloat(
+                    materialSeparado[2]
+                  );
+                  auxMaterial.Cantidad_de_material = parseInt(
+                    materialSeparado[1]
+                  );
+                  auxMaterial.id_material = materialSeparado[3];
+                  materialTemporal.nombre = materialSeparado[0];
+                  materialTemporal.cantidad = parseInt(materialSeparado[1]);
+                  materialTemporal.margen_individual = parseFloat(
+                    materialSeparado[2]
+                  );
+                  materialTemporal.id = materialSeparado[3];
+                  this.margenesCantidades.push(auxMaterial);
+                  materialesIDS.push(materialTemporal);
+                });
+                resolve(materialesIDS);
+              } else {
+                reject(null);
+              }
+            }
+          );
+        });
+      });
+
+      // NOTE Promesa para devolver un material
+      let getMaterialIndividual = (material) => {
+        return new Promise((resolve, reject) => {
+          let config = {
+            reportName: "Materiales_Report",
+            id: material.id,
+          };
+          ZOHO.CREATOR.API.getRecordById(config).then((response) => {
+            if (response.code === 3000) {
+              let tempObjetoMaterial = {};
+              tempObjetoMaterial.unidad = response.data.unidad;
+              tempObjetoMaterial.um = response.data.um;
+              tempObjetoMaterial.descripcion = response.data.nombre;
+              tempObjetoMaterial.precio_lista = parseFloat(
+                response.data.precio_lista
+              );
+              tempObjetoMaterial.costo_unidad = parseFloat(
+                response.data.Costo_Unitario
+              );
+              tempObjetoMaterial.costo_instalacion = parseFloat(
+                response.data.COSTO_INSTALACION_UNIDAD
+              );
+              tempObjetoMaterial.pv_sugerido = parseFloat(
+                response.data.precio_venta
+              );
+              tempObjetoMaterial.costo_u = tempObjetoMaterial.costo_unidad;
+              tempObjetoMaterial.costo_total = 1;
+              tempObjetoMaterial.pv_unitario = parseFloat(
+                response.data.precio_lista
+              );
+              tempObjetoMaterial.pv_total = 1;
+              tempObjetoMaterial.importe = 0;
+
+              tempObjetoMaterial.cantidad_de_piezas = parseInt(
+                material.cantidad
+              );
+              tempObjetoMaterial.margen_individual = parseFloat(
+                material.margen_individual
+              );
+              resolve(tempObjetoMaterial);
+            } else {
+              reject(null);
+            }
+          });
+        });
       };
 
-      ZOHO.CREATOR.init().then((data) => {
-        ZOHO.CREATOR.API.getAllRecords(lista_de_materiales_config).then(
-          async (response) => {
-            // Declaro variables
-            let materialesIDS = [];
-            let promesasDeMateriales = [];
-
-            // Funcion para traer un material por id
-            let getMaterialIndividual = (material) => {
-              let config = {
-                reportName: "Materiales_Report",
-                id: material.id,
-              };
-              ZOHO.CREATOR.API.getRecordById(config).then((response) => {
-                // console.log(response.data[0]);
-                let tempObjetoMaterial = {};
-                tempObjetoMaterial.unidad = response.data.unidad;
-                tempObjetoMaterial.um = response.data.um;
-                tempObjetoMaterial.descripcion = response.data.nombre;
-                tempObjetoMaterial.precio_lista = parseFloat(
-                  response.data.precio_lista
-                );
-                tempObjetoMaterial.costo_unidad = parseFloat(
-                  response.data.Costo_Unitario
-                );
-                tempObjetoMaterial.costo_instalacion = parseFloat(
-                  response.data.COSTO_INSTALACION_UNIDAD
-                );
-                tempObjetoMaterial.pv_sugerido = parseFloat(
-                  response.data.precio_venta
-                );
-                tempObjetoMaterial.costo_u = tempObjetoMaterial.costo_unidad;
-                tempObjetoMaterial.costo_total = 1;
-                tempObjetoMaterial.pv_unitario = parseFloat(
-                  response.data.precio_lista
-                );
-                tempObjetoMaterial.pv_total = 1;
-                tempObjetoMaterial.importe = 0;
-
-                tempObjetoMaterial.cantidad_de_piezas = parseInt(
-                  material.cantidad
-                );
-                tempObjetoMaterial.margen_individual = parseFloat(
-                  material.margen_individual
-                );
-                this.listaDeMateriales.push(tempObjetoMaterial);
-              });
-            };
-
-            // array de promesas
-            response.data[0].agregar_material.forEach((element) => {
-              // NOTE el valor esta separado por __ y es, nombre, cantidad, margen i, id del material
-              let materialSeparado = element.display_value.split("__");
-              let materialTemporal = {};
-              materialTemporal.cantidad = materialSeparado[1];
-              materialTemporal.margen_individual = materialSeparado[2];
-              materialTemporal.id = materialSeparado[3];
-              materialesIDS.push(materialTemporal);
-            });
-
-            materialesIDS.map((idm) => {
-              promesasDeMateriales.push(getMaterialIndividual(idm));
-            });
-
-            await Promise.all(promesasDeMateriales)
-              .then(() => {
-                console.log(this.listaDeMateriales);
-              })
-              .catch((e) => {
-                console.log(`Error in ${e}`);
-                alert("Ocurrió un error del servidor.");
-              });
-
-            // // console.log(response.data);
-            // response.data[0].SubForm.forEach((element) => {
-            //   let splittedMaterial = element.display_value.split("?=");
-            //   let objetoMaterial = {};
-            //   objetoMaterial.unidad = splittedMaterial[0];
-            //   objetoMaterial.descripcion = splittedMaterial[1];
-            //   objetoMaterial.precio_lista = parseInt(splittedMaterial[2]);
-            //   objetoMaterial.costo_unidad = parseInt(splittedMaterial[3]);
-            //   objetoMaterial.costo_instalacion = parseInt(splittedMaterial[4]);
-            //   objetoMaterial.pv_sugerido = parseInt(splittedMaterial[5]);
-            //   // aqui vale pondra el id del material entonces nuevo los indices en 1
-            //   objetoMaterial.costo_u = parseInt(splittedMaterial[7]);
-            //   objetoMaterial.costo_total = parseInt(splittedMaterial[8]);
-            //   objetoMaterial.margen_individual = parseInt(splittedMaterial[9]);
-            //   objetoMaterial.pv_unitario = parseInt(splittedMaterial[10]);
-            //   objetoMaterial.pv_total = parseInt(splittedMaterial[11]);
-            //   objetoMaterial.cantidad_de_piezas = parseInt(
-            //     splittedMaterial[12]
-            //   );
-            //   objetoMaterial.importe = parseInt(splittedMaterial[13]);
-            //   this.listaDeMateriales.push(objetoMaterial);
-            // });
-          }
-        );
+      // NOTE Una vez tengo la lista, obtengo cada material
+      getListaDeMateriales.then((listaMateriales) => {
+        Promise.all(
+          listaMateriales.map((material) => {
+            return getMaterialIndividual(material);
+          })
+        )
+          .then((materialesListos) => {
+            // NOTE ya que está el array de materiales listo,
+            // lo igualo a la variable del componente
+            // this.listaDeMateriales = materialesListos;
+            console.log(materialesListos);
+            console.log(this.listaDeMateriales);
+            this.listaDeMateriales = [...materialesListos];
+            this.cargandoMateriales = false;
+            this.showTable = true;
+          })
+          .catch((error) => {
+            console.log(`Error type: ${error}`);
+          });
       });
     },
 
