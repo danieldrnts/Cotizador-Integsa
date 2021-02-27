@@ -203,40 +203,14 @@ var app = new Vue({
   },
 
   methods: {
-    // NOTE metodo para crear el formData utilizado para
-    // guardar la cantidad de materiales y el margen individual
+    // Metodo que modifica el  margen individual de un material especifico.
     setCantidadMargen(margenNuevo, indexMaterial) {
       // modifico el material que necesito
       this.margenesCantidades[indexMaterial].margen_individual = margenNuevo;
       console.log(this.margenesCantidades);
     },
 
-    tester() {
-      formData = {
-        data: {
-          agregar_material: this.margenesCantidades,
-        },
-      };
-
-      ZOHO.CREATOR.init().then((data) => {
-        var config = {
-          reportName: "Lista_de_Materiales_Report",
-          id: this.DatosCotizador.id_lista_materiales,
-          data: formData,
-        };
-
-        //update record API
-        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
-          //callback block
-          console.log(response);
-          if (response.code == 3000) {
-            alert("Guardado con exito.");
-          } else {
-            alert("Error de servidor, intenta de nuevo.");
-          }
-        });
-      });
-    },
+    tester() {},
 
     descargaExcel() {
       // instancia de workbook
@@ -1093,6 +1067,40 @@ var app = new Vue({
             console.log(this.listaDeMateriales);
             this.listaDeMateriales = [...materialesListos];
             this.cargandoMateriales = false;
+            let objetoMO = {};
+            objetoMO.unidad = "Srv.";
+            objetoMO.um = "Srv.";
+            objetoMO.descripcion = "INSTALACIÓN Y PUESTA EN OPERACIÓN";
+            objetoMO.precio_lista = 0;
+            objetoMO.costo_unidad = 0;
+            objetoMO.costo_instalacion = 0;
+            objetoMO.pv_sugerido = 0;
+            objetoMO.costo_u = 0;
+            objetoMO.costo_total = 0;
+            objetoMO.margen_individual = 0;
+            objetoMO.pv_unitario = 0;
+            objetoMO.pv_total = 0;
+            objetoMO.cantidad_de_piezas = 1;
+            objetoMO.importe = 0;
+            this.listaDeMateriales.push(objetoMO);
+            //
+            let objetoMiscelaneos = {};
+            objetoMiscelaneos.unidad = "Srv.";
+            objetoMiscelaneos.um = "Srv.";
+            objetoMiscelaneos.descripcion = "MISCELÁNEOS";
+            objetoMiscelaneos.precio_lista = 0;
+            objetoMiscelaneos.costo_unidad = 0;
+            objetoMiscelaneos.costo_instalacion = 0;
+            objetoMiscelaneos.pv_sugerido = 0;
+            // aqui vale pondra el id del material entonces nuevo los indices en 1
+            objetoMiscelaneos.costo_u = 0;
+            objetoMiscelaneos.costo_total = 0;
+            objetoMiscelaneos.margen_individual = 0;
+            objetoMiscelaneos.pv_unitario = 0;
+            objetoMiscelaneos.pv_total = 0;
+            objetoMiscelaneos.cantidad_de_piezas = 1;
+            objetoMiscelaneos.importe = 0;
+            this.listaDeMateriales.push(objetoMiscelaneos);
             this.showTable = true;
           })
           .catch((error) => {
@@ -1116,9 +1124,42 @@ var app = new Vue({
       return JSON.stringify(materialesValores);
     },
 
-    updateField() {
+    async updateField() {
+      // metodo que actualiza los margenes individuales en zoho
+      let updateMargenIndividual = () => {
+        formData = {
+          data: {
+            agregar_material: this.margenesCantidades,
+          },
+        };
+
+        ZOHO.CREATOR.init().then((data) => {
+          var config = {
+            reportName: "Lista_de_Materiales_Report",
+            id: this.DatosCotizador.id_lista_materiales,
+            data: formData,
+          };
+
+          //update record API
+          ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+            //callback block
+            console.log(response);
+            if (response.code == 3000) {
+              // alert("Guardado con exito.");
+              return true;
+            } else {
+              // alert("Error de servidor, intenta de nuevo.");
+              return false;
+            }
+          });
+        });
+      };
+
+      const margenesUpdated = await updateMargenIndividual();
+      console.log(margenesUpdated);
+
       // convertir de nuevo las listas de materiales a JSON
-      this.datosInternos.Datos_json = this.getJsonMateriales();
+      // this.datosInternos.Datos_json = this.getJsonMateriales();
       //
       this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO = this.variablesIndirectas.tipo_cambio;
       this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR = this.variablesIndirectas.margen_a_aplicar;
@@ -1167,7 +1208,7 @@ var app = new Vue({
           VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
           VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
           VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
-          Datos_json: `${this.datosInternos.Datos_json}`,
+          // Datos_json: `${this.datosInternos.Datos_json}`,
         },
       };
 
