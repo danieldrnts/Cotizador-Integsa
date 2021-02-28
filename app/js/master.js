@@ -1,3 +1,5 @@
+// const { response } = require("express");
+
 var app = new Vue({
   el: "#app",
   data() {
@@ -1102,6 +1104,7 @@ var app = new Vue({
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
             this.showTable = true;
+            this.flujoGeneral();
           })
           .catch((error) => {
             console.log(`Error type: ${error}`);
@@ -1126,7 +1129,7 @@ var app = new Vue({
 
     async updateField() {
       // metodo que actualiza los margenes individuales en zoho
-      let updateMargenIndividual = () => {
+      let updateMargenIndividual = new Promise((resolve, reject) => {
         formData = {
           data: {
             agregar_material: this.margenesCantidades,
@@ -1146,89 +1149,89 @@ var app = new Vue({
             console.log(response);
             if (response.code == 3000) {
               // alert("Guardado con exito.");
-              return true;
+              resolve(true);
             } else {
               // alert("Error de servidor, intenta de nuevo.");
-              return false;
+              reject(false);
             }
           });
         });
-      };
+      });
 
-      const margenesUpdated = await updateMargenIndividual();
-      console.log(margenesUpdated);
+      updateMargenIndividual.then((response) => {
+        console.log(response);
+        // convertir de nuevo las listas de materiales a JSON
+        // this.datosInternos.Datos_json = this.getJsonMateriales();
+        //
+        this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO = this.variablesIndirectas.tipo_cambio;
+        this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR = this.variablesIndirectas.margen_a_aplicar;
+        this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO = this.variablesIndirectas.miscelaneosMonto;
+        this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE = this.variablesIndirectas.miscelaneosPorcentaje;
+        this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER = this.variablesIndirectas.precioPartner;
+        this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO = this.variablesIndirectas.horario_nocturno;
+        this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL = this.variablesIndirectas.mano_obra;
+        this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA = this.variablesIndirectas.distancia;
+        this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA = this.variablesIndirectas.num_vueltas;
+        this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA = this.variablesIndirectas.precio_gasolina;
+        this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS = this.variablesIndirectas.herramientas;
+        this.datosInternos.VARIABLE_INDIRECTA_SCANNER = this.variablesIndirectas.scanner;
+        this.datosInternos.VARIABLE_INDIRECTA_VIATICOS = this.variablesIndirectas.viaticos;
+        this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO = this.variablesIndirectas.proyecto_riesgozo;
 
-      // convertir de nuevo las listas de materiales a JSON
-      // this.datosInternos.Datos_json = this.getJsonMateriales();
-      //
-      this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO = this.variablesIndirectas.tipo_cambio;
-      this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR = this.variablesIndirectas.margen_a_aplicar;
-      this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO = this.variablesIndirectas.miscelaneosMonto;
-      this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE = this.variablesIndirectas.miscelaneosPorcentaje;
-      this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER = this.variablesIndirectas.precioPartner;
-      this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO = this.variablesIndirectas.horario_nocturno;
-      this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL = this.variablesIndirectas.mano_obra;
-      this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA = this.variablesIndirectas.distancia;
-      this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA = this.variablesIndirectas.num_vueltas;
-      this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA = this.variablesIndirectas.precio_gasolina;
-      this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS = this.variablesIndirectas.herramientas;
-      this.datosInternos.VARIABLE_INDIRECTA_SCANNER = this.variablesIndirectas.scanner;
-      this.datosInternos.VARIABLE_INDIRECTA_VIATICOS = this.variablesIndirectas.viaticos;
-      this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO = this.variablesIndirectas.proyecto_riesgozo;
+        formData = {
+          // RENOMBRAR COTIZACIO INTERNA TOTAL A SUMA DE COSTOS TOTALES
 
-      formData = {
-        // RENOMBRAR COTIZACIO INTERNA TOTAL A SUMA DE COSTOS TOTALES
-
-        // renombrar SUMA_IMPORTES_TOTALES a suma de importes total
-        data: {
-          ID: `${this.datosInternos.ID}`,
-          DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
-          DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
-          DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
-          DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
-          DETALLES_PROYECTO: `${this.datosInternos.DETALLES_PROYECTO}`,
-          DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
-          COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
-          DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
-          DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
-          DETALLES_LUGAR_ENTREGA: `${this.datosInternos.DETALLES_LUGAR_ENTREGA}`,
-          CUANTOS_SUPERVISOR: `${this.datosInternos.CUANTOS_SUPERVISOR}`,
-          CUANTOS_TECNICO: `${this.datosInternos.CUANTOS_TECNICO}`,
-          VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
-          VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
-          VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
-          VARIABLE_INDIRECTA_NUM_VUELTA: `${this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA}`,
-          VARIABLE_INDIRECTA_PRECIO_GASOLINA: `${this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA}`,
-          VARIABLE_INDIRECTA_HERRAMIENTAS: `${this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS}`,
-          VARIABLE_INDIRECTA_SCANNER: `${this.datosInternos.VARIABLE_INDIRECTA_SCANNER}`,
-          VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
-          VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
-          VARIABLE_INDIRECTA_TIPO_CAMBIO: `${this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO}`,
-          VARIABLE_INDIRECTA_MARGEN_APLICAR: `${this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR}`,
-          VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
-          VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
-          VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
-          // Datos_json: `${this.datosInternos.Datos_json}`,
-        },
-      };
-
-      ZOHO.CREATOR.init().then((data) => {
-        var config = {
-          reportName: "Datos_Cotizador_Report",
-          // Aqui el error es el id
-          id: `${this.datosInternos.ID}`,
-          data: formData,
+          // renombrar SUMA_IMPORTES_TOTALES a suma de importes total
+          data: {
+            ID: `${this.datosInternos.ID}`,
+            DETALLES_FECHA: `${this.datosInternos.DETALLES_FECHA}`,
+            DETALLES_EMPRESA: `${this.datosInternos.DETALLES_EMPRESA}`,
+            DETALLES_PUESTO: `${this.datosInternos.DETALLES_PUESTO}`,
+            DETALLES_TELEFONOS: `${this.datosInternos.DETALLES_TELEFONOS}`,
+            DETALLES_PROYECTO: `${this.datosInternos.DETALLES_PROYECTO}`,
+            DETALLES_FAX: `${this.datosInternos.DETALLES_FAX}`,
+            COTIZACION_INTERNA_MARGEN_GLOBAL: `${this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL}`,
+            DETALLES_TIEMPO_ENTREGA: `${this.datosInternos.DETALLES_TIEMPO_ENTREGA}`,
+            DETALLES_ATENCION: `${this.datosInternos.DETALLES_ATENCION}`,
+            DETALLES_LUGAR_ENTREGA: `${this.datosInternos.DETALLES_LUGAR_ENTREGA}`,
+            CUANTOS_SUPERVISOR: `${this.datosInternos.CUANTOS_SUPERVISOR}`,
+            CUANTOS_TECNICO: `${this.datosInternos.CUANTOS_TECNICO}`,
+            VARIABLE_INDIRECTA_HORARIO_NOCTURNO: `${this.datosInternos.VARIABLE_INDIRECTA_HORARIO_NOCTURNO}`,
+            VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL: `${this.datosInternos.VARIABLE_INDIRECTA_MANO_OBRA_ESPECIAL}`,
+            VARIABLE_INDIRECTA_DISTANCIA: `${this.datosInternos.VARIABLE_INDIRECTA_DISTANCIA}`,
+            VARIABLE_INDIRECTA_NUM_VUELTA: `${this.datosInternos.VARIABLE_INDIRECTA_NUM_VUELTA}`,
+            VARIABLE_INDIRECTA_PRECIO_GASOLINA: `${this.datosInternos.VARIABLE_INDIRECTA_PRECIO_GASOLINA}`,
+            VARIABLE_INDIRECTA_HERRAMIENTAS: `${this.datosInternos.VARIABLE_INDIRECTA_HERRAMIENTAS}`,
+            VARIABLE_INDIRECTA_SCANNER: `${this.datosInternos.VARIABLE_INDIRECTA_SCANNER}`,
+            VARIABLE_INDIRECTA_VIATICOS: `${this.datosInternos.VARIABLE_INDIRECTA_VIATICOS}`,
+            VARIABLE_INDIRECTA_PROYECTO_RIESGOZO: `${this.datosInternos.VARIABLE_INDIRECTA_PROYECTO_RIESGOZO}`,
+            VARIABLE_INDIRECTA_TIPO_CAMBIO: `${this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO}`,
+            VARIABLE_INDIRECTA_MARGEN_APLICAR: `${this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR}`,
+            VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
+            VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
+            VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
+            // Datos_json: `${this.datosInternos.Datos_json}`,
+          },
         };
 
-        //update record API
-        ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
-          //callback block
-          console.log(response);
-          if (response.code == 3000) {
-            alert("Guardado con exito.");
-          } else {
-            alert("Error de servidor, intenta de nuevo.");
-          }
+        ZOHO.CREATOR.init().then((data) => {
+          var config = {
+            reportName: "Datos_Cotizador_Report",
+            // Aqui el error es el id
+            id: `${this.datosInternos.ID}`,
+            data: formData,
+          };
+
+          //update record API
+          ZOHO.CREATOR.API.updateRecord(config).then(function (response) {
+            //callback block
+            console.log(response);
+            if (response.code == 3000) {
+              alert("Guardado con exito.");
+            } else {
+              alert("Error de servidor, intenta de nuevo.");
+            }
+          });
         });
       });
     },
