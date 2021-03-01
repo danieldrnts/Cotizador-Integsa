@@ -5,6 +5,7 @@ var app = new Vue({
   data() {
     return {
       showTable: false,
+      excelMensajeCotizacion: "Folio pendiente de aprobar en CRM",
       cargandoMateriales: false,
       errorParsing: false,
       indexMateriales: 0,
@@ -208,8 +209,10 @@ var app = new Vue({
     // Metodo que modifica el  margen individual de un material especifico.
     setCantidadMargen(margenNuevo, indexMaterial) {
       // modifico el material que necesito
+      this.listaDeMateriales[indexMaterial].margen_individual = margenNuevo;
       this.margenesCantidades[indexMaterial].margen_individual = margenNuevo;
-      console.log(this.margenesCantidades);
+      // console.log(this.margenesCantidades);
+      this.flujoGeneral();
     },
 
     tester() {},
@@ -330,49 +333,61 @@ var app = new Vue({
         "I" + (finalRowIndex + 5)
       ).value = this.datosInternos.COTIZACION_INTERNA_UTILIDAD;
       integsaSheet.getCell("I" + (finalRowIndex + 6)).value = "Utilidad";
-      integsaSheet.getCell(
-        "I" + (finalRowIndex + 8)
-      ).value = this.datosInternos.UTILIDAD_PORCENTAJE;
+      integsaSheet.getCell("I" + (finalRowIndex + 8)).value = parseFloat(
+        this.datosInternos.UTILIDAD_PORCENTAJE
+      ).toFixed(2);
       integsaSheet.getCell("I" + (finalRowIndex + 9)).value =
         "PORCENTAJE UTILIDAD";
 
       integsaSheet.insertRow(1, [
         "Indirectos",
-        this.$data.datosInternos.INDIRECTOS_USD,
-        {
-          formula: "B1/B3",
-          value:
-            this.$data.datosInternos.INDIRECTOS_USD /
-            this.$data.datosInternos.MO_CON_MARGEN,
-        },
+        // this.$data.datosInternos.INDIRECTOS_USD,
+        parseFloat(this.variablesIndirectas.total_indirectos_usd).toFixed(2),
+        // {
+        //   formula: "B1/B3",
+        //   value:
+        //     this.$data.datosInternos.INDIRECTOS_USD /
+        //     this.$data.datosInternos.MO_CON_MARGEN,
+        // },
+        parseFloat(
+          this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS
+        ).toFixed(2),
         "MO vs Ind",
       ]);
       integsaSheet.insertRow(2, [
         "Materiales",
-        {
-          formula: "=SUM(I8:I" + (finalRowIndex - 2) + ")",
-          value: this.$data.datosInternos.COTIZACION_INTERNA_MATERIALES,
-        },
+        parseFloat(this.datosInternos.COTIZACION_INTERNA_MATERIALES).toFixed(2),
+        // {
+        //   formula: "=SUM(I8:I" + (finalRowIndex - 2) + ")",
+        //   value: this.$data.datosInternos.COTIZACION_INTERNA_MATERIALES,
+        // },
       ]);
       integsaSheet.insertRow(3, [
         "Mano de Obra",
-        {
-          formula: "I" + (finalRowIndex - 1),
-          value: this.$data.datosInternos.MO_CON_MARGEN,
-        },
+        parseFloat(this.datosInternos.COTIZACION_INTERNA_MANO_OBRA).toFixed(2),
+        // {
+        //   // formula: "I" + (finalRowIndex - 1),
+        //   // formula: "F" + (finalRowIndex - 1),
+        //   // value: this.$data.datosInternos.MO_CON_MARGEN,
+        // },
       ]);
       integsaSheet.insertRow(4, [
         "",
-        {
-          formula: "B3/B2",
-          value: this.$data.datosInternos
-            .COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES,
-        },
+        parseFloat(
+          this.datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES
+        ).toFixed(2),
+        // {
+        //   formula: "B3/B2",
+        //   value: this.$data.datosInternos
+        //     .COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES,
+        // },
         "MO vs Mat",
       ]);
       integsaSheet.insertRow(5, [
         "MARGEN GLOBAL",
-        this.$data.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL,
+        parseFloat(
+          this.$data.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL
+        ).toFixed(2),
       ]);
 
       integsaSheet.spliceRows(6, 5);
@@ -417,7 +432,16 @@ var app = new Vue({
         "Proy:",
         this.$data.DatosCotizador.proyectos,
       ]);
-      clientSheet.insertRow(4, ["", "", "", "", "Cotización:", "###"]);
+      // TODO añadir los campos de Cotizacion
+      clientSheet.insertRow(4, [
+        "",
+        "",
+        "",
+        "",
+        "Cotización:",
+        // this.$data.DatosCotizador.nombre_de_cotizacion,
+        this.excelMensajeCotizacion,
+      ]);
 
       clientSheet.mergeCells("A6:G6");
       clientSheet.getCell("A6").value =
@@ -426,11 +450,12 @@ var app = new Vue({
 
       clientSheet.insertRow(9, [
         "EMPRESA",
-        this.$data.DatosCotizador.Cliente,
+        this.$data.DatosCotizador.Cliente.display_value,
         "",
         "",
         "TIPO DE MONEDA:",
-        this.$data.datosInternos.DETALLES_TIPO_MONEDA,
+        // this.$data.datosInternos.DETALLES_TIPO_MONEDA,
+        "Dólares",
       ]);
       clientSheet.mergeCells("B9:D9");
 
@@ -440,7 +465,8 @@ var app = new Vue({
         "",
         "",
         "TIEMPO DE ENT.:",
-        "Ver Cond. Com.",
+        // "Ver Cond. Com.",
+        this.datosInternos.DETALLES_TIEMPO_ENTREGA,
       ]);
       clientSheet.mergeCells("B10:D10");
 
@@ -458,7 +484,8 @@ var app = new Vue({
         "TELEFONOS:",
         this.$data.datosInternos.DETALLES_TELEFONOS,
         "",
-        this.$data.DatosCotizador.nombre_de_cotizacion,
+        // this.$data.DatosCotizador.nombre_de_cotizacion,
+        "",
         "NUM. DE PARTIDAS:",
         this.$data.datosInternos.DETALLES_NUMERO_PARTIDAS,
       ]);
@@ -482,7 +509,7 @@ var app = new Vue({
         "Precio Lista",
         "Importe",
       ]);
-      clientSheet.mergeCells("B14:C14");
+      // clientSheet.mergeCells("B14:C14");
 
       clientSheet.insertRow(15, []);
       clientSheet.insertRow(16, []);
@@ -497,8 +524,10 @@ var app = new Vue({
           item["cantidad_de_piezas"],
           item["unidad"],
           item["descripcion"],
-          item["pv_unitario"],
-          item["pv_total"],
+          item["precio_lista"],
+          item["importe"],
+          // item["pv_unitario"],
+          // item["pv_total"],
         ]);
         finalRowIndex = index;
         pvGlobal += item["pv_total"];
@@ -802,6 +831,7 @@ var app = new Vue({
         const element = this.listaDeMateriales[index];
         element.margen_individual = this.datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL;
       }
+      this.flujoGeneral();
     },
 
     // Flujo para generar las cotizaciones
@@ -838,6 +868,9 @@ var app = new Vue({
           );
           // 4. get lista de materiales
           this.getMateriales(this.DatosCotizador.id_lista_materiales);
+          if (this.DatosCotizador.No_Folio != "Folio") {
+            this.excelMensajeCotizacion = this.DatosCotizador.No_Folio;
+          }
         });
       });
     },
@@ -1103,6 +1136,7 @@ var app = new Vue({
             objetoMiscelaneos.cantidad_de_piezas = 1;
             objetoMiscelaneos.importe = 0;
             this.listaDeMateriales.push(objetoMiscelaneos);
+            this.calculaCotaMayor();
             this.showTable = true;
             this.flujoGeneral();
           })
@@ -1210,6 +1244,7 @@ var app = new Vue({
             VARIABLE_INDIRECTA_MISCELANEOS_MONTO: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO}`,
             VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE: `${this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE}`,
             VARIABLE_INDIRECTA_COSTO_PARTNER: `${this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER}`,
+            COTIZACION_INTERNA_UTILIDAD: `${this.datosInternos.COTIZACION_INTERNA_UTILIDAD}`,
             // Datos_json: `${this.datosInternos.Datos_json}`,
           },
         };
@@ -1453,6 +1488,8 @@ var app = new Vue({
           count = count + parseFloat(element.costo_instalacion);
         }
       });
+      // if()
+      console.log("count: " + count);
       this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD = count;
       this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN =
         this.datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD *
@@ -1492,9 +1529,7 @@ var app = new Vue({
     //   });
     // },
   },
-  mounted() {
-    this.calculaCotaMayor();
-  },
+  mounted() {},
   created() {
     ZOHO.CREATOR.init().then((data) => {
       // 1. Obtengo los parametros de la pagina. Solo el id del cotizador.

@@ -108,9 +108,9 @@
                       <th scope="col">{{datosInternos.DETALLES_FECHA}}</th>
                       <th scope="col">INDIRECTOS</th>
                       <th scope="col">
-                        ${{variablesIndirectas.total_indirectos_usd}}
+                        ${{(parseFloat(variablesIndirectas.total_indirectos_usd)).toFixed(2)}}
                       </th>
-                      <th scope="col">${{ parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS)  }}
+                      <th scope="col">${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS)).toFixed(2)  }}
                       </th>
                       <th scope="col"> MO vs Indirectos</th>
                     </tr>
@@ -120,14 +120,14 @@
                       <th scope="row">PROYECTO</th>
                       <td>{{DatosCotizador.proyectos}}</td>
                       <td>MATERIALES</td>
-                      <td>${{ parseFloat(datosInternos.COTIZACION_INTERNA_MATERIALES)  }}</td>
+                      <td>${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MATERIALES)).toFixed(2)  }}</td>
                     </tr>
                     <tr>
                       <th scope="row">COTIZACIÓN #</th>
                       <td>{{datosInternos.ID}}</td>
                       <td>MANO DE OBRA</td>
-                      <td>${{ parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA)  }}</td>
-                      <td>${{ parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES)  }}</td>
+                      <td>${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA)).toFixed(2)  }}</td>
+                      <td>${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES)).toFixed(2)  }}</td>
                       <td>MO vs Mat.</td>
                     </tr>
                     <tr>
@@ -154,7 +154,8 @@
                       <th scope="col"></th>
                       <th scope="col"></th>
                       <th scope="col">Tipo de moneda</th>
-                      <th scope="col">{{datosInternos.DETALLES_TIPO_MONEDA  }}</th>
+                      <!-- <th scope="col">{{datosInternos.DETALLES_TIPO_MONEDA  }}</th> -->
+                      <th scope="col">Dólares</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -167,7 +168,8 @@
                       <td></td>
                       <td>Tiempo de entrega</td>
                       <td>
-                        {{datosInternos.DETALLES_TIEMPO_ENTREGA}}
+                        <input type="text" v-model="datosInternos.DETALLES_TIEMPO_ENTREGA" :value="datosInternos.DETALLES_TIEMPO_ENTREGA" >
+                        <!-- {{datosInternos.DETALLES_TIEMPO_ENTREGA}} -->
                       </td>
                     </tr>
                     <tr>
@@ -179,14 +181,15 @@
                       <td></td>
                       <td>Lugar de entrega</td>
                       <td>
-                        {{datosInternos.DETALLES_LUGAR_ENTREGA}}
+                        <input type="text" v-model="datosInternos.DETALLES_LUGAR_ENTREGA" value="datosInternos.DETALLES_LUGAR_ENTREGA" >
+                        <!-- {{datosInternos.DETALLES_LUGAR_ENTREGA}} -->
                       </td>
                     </tr>
                     <tr>
                       <th scope="row">Telefono</th>
                       <td colspan="2">
                         <input type="text" v-model="datosInternos.DETALLES_TELEFONOS" class="form-control"
-                          value="datosInternos.DETALLES_TELEFONOS" name="datosInternos.DETALLES_TELEFONOS" >
+                          :value="datosInternos.DETALLES_TELEFONOS" name="datosInternos.DETALLES_TELEFONOS" >
                       </td>
                       <td></td>
                       <td>Num. de partidas</td>
@@ -213,7 +216,7 @@
                       <!-- <button @click="flujoGeneral" class="btn btn-primary" > Flujo</button> -->
                     </div>
                     <div class="col-3 px-1">
-                      <p class="h4 " :class="{'text-success': datosInternos.UTILIDAD_PORCENTAJE > 25 , 'text-danger': datosInternos.UTILIDAD_PORCENTAJE < 25 } " > {{datosInternos.UTILIDAD_PORCENTAJE }} %</p>
+                      <p class="h4 " :class="{'text-success': datosInternos.UTILIDAD_PORCENTAJE > 25 , 'text-danger': datosInternos.UTILIDAD_PORCENTAJE < 25 } " > {{ parseFloat(datosInternos.UTILIDAD_PORCENTAJE).toFixed(2) }} %</p>
                     </div>
                     <div class="col-3">
                       <!-- <button @click="showModal = !showModal" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -242,7 +245,7 @@
                       <th scope="col"></th>
                       <th scope="col"></th>
                       <th scope="col"></th>
-                      <th scope="col">CAMPO_MARGEN-GLOBAL</th>
+                      <th scope="col">MARGEN GLOBAL</th>
                       <th class="table-warning" class="form-control" style="width: 5em;" 
                       :class="{'table-danger' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL < 25 }" scope="col">
                         <input @change="setMargenGlobal" style="width: 5em;"  
@@ -280,10 +283,10 @@
                       <!-- <td>{{material.unidad}}</td> -->
                       <td>{{material.um}}</td>
                       <td>{{material.descripcion}}</td>
-                      <td>${{parseFloat(material.precio_lista) }}</td>
-                      <td>${{parseFloat(material.importe) }} </td>
-                      <td>${{parseFloat(material.costo_u) }}</th>
-                      <td>${{parseFloat(material.costo_total) }}</td>
+                      <td>${{parseFloat(material.precio_lista).toFixed(2) }}</td>
+                      <td>${{parseFloat(material.importe).toFixed(2) }} </td>
+                      <td>${{parseFloat(material.costo_u).toFixed(2) }}</th>
+                      <td>${{parseFloat(material.costo_total).toFixed(2) }}</td>
                       <td class="table-warning" :class="{'table-danger' : material.margen_individual < 25 }">
                         <input  @change="setCantidadMargen(material.margen_individual, index)" class="form-control" style="width: 5em;"  :disabled="material.descripcion == 'INSTALACIÓN Y PUESTA EN OPERACIÓN' || material.descripcion == 'MISCELÁNEOS' " v-model="material.margen_individual" type="number"
                           value="material.margen_individual" >
@@ -307,9 +310,9 @@
                       <td></td>
                       <td></td>
                       <td>Total</td>
-                      <td class="table-info">$ {{parseFloat(datosInternos.SUMA_IMPORTES_TOTALES) }}</td>
+                      <td class="table-info">$ {{(parseFloat(datosInternos.SUMA_IMPORTES_TOTALES)).toFixed(2) }}</td>
                       <td></td>
-                      <td class="table-success">$ {{parseFloat(datosInternos.SUMA_COSTOS_TOTALES) }}</td>
+                      <td class="table-success">$ {{(parseFloat(datosInternos.SUMA_COSTOS_TOTALES)).toFixed(2) }}</td>
                       <td></td>
                     </tr>
                     <tr>
@@ -317,7 +320,7 @@
                         </th>
                       <td></td>
                       <td>Utilidad</td>
-                      <td class="table-success">${{parseFloat(datosInternos.COTIZACION_INTERNA_UTILIDAD) }}</td>
+                      <td class="table-success">${{parseFloat(datosInternos.COTIZACION_INTERNA_UTILIDAD).toFixed(2) }}</td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -361,7 +364,7 @@
                     <tr v-for="material in listaDeMateriales"  >
                       <td>{{material.descripcion}}</td>
                       <td   ><span v-if="material.costo_instalacion >= 0" >
-                        $ {{material.costo_instalacion}}
+                        $ {{(parseFloat(material.costo_instalacion)).toFixed(2)}}
                       </span>
                       <span v-else >
                         No existe este dato.
@@ -371,7 +374,7 @@
                     </tr>
                     <tr class="table-info" >
                       <td>Mano de Obra</td>
-                      <td>$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD)  }} </td>
+                      <td>$ {{ (parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD)).toFixed(2)  }} </td>
                     </tr>
                   </tbody>
                 </table>
@@ -419,12 +422,12 @@
                         <input @change="flujoGeneral"  v-model.number="datosInternos.CUANTOS_SUPERVISOR" min="0" max="10000" type="number" class="form-control" >
                       </td>
                       <td>
-                        $ {{ parseFloat(datosInternos.MES_UNI_SUPERVISOR) }} MXN
+                        $ {{ (parseFloat(datosInternos.MES_UNI_SUPERVISOR)).toFixed(2) }} MXN
                       </td>
                       <td  > 
-                        $ {{datosInternos.DIARIO_UNI_SUPERVISOR  }}
+                        $ {{ (parseFloat(datosInternos.DIARIO_UNI_SUPERVISOR)).toFixed(2)  }}
                       </td>
-                      <td>$ {{datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR  }}</td>
+                      <td>$ {{ (parseFloat(datosInternos.TOTAL_COSTO_DIARIO_SUPERVISOR )).toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <td>Técnico</td>
@@ -435,13 +438,13 @@
                         $ {{ parseFloat(datosInternos.MES_UNI_TECNICO)  }} MXN
                       </td>
                       <td>
-                        $ {{datosInternos.DIARIO_UNI_TECNICO   }}
+                        $ {{ (parseFloat(datosInternos.DIARIO_UNI_TECNICO)).toFixed(2)   }}
                       </td>
-                      <td> $ {{datosInternos.TOTAL_COSTO_DIARIO_TECNICO }}</td>
+                      <td> $ {{ (parseFloat(datosInternos.TOTAL_COSTO_DIARIO_TECNICO)).toFixed(2) }}</td>
                     </tr>
                     <tr>
                       <td colspan="4" ></td>
-                      <td>$ {{total_costo_diario_local  }}</td>
+                      <td>$ {{ (parseFloat(total_costo_diario_local)).toFixed(2)  }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -458,8 +461,8 @@
                   <tbody>
                     <tr>
                       
-                      <td>$ {{this.datosInternos.MO_FLAT_MXN  }}</td>
-                      <td>$ {{this.datosInternos.MO_CON_IMPUESTOS  }}</td>
+                      <td>$ {{ (parseFloat(this.datosInternos.MO_FLAT_MXN)).toFixed(2)  }}</td>
+                      <td>$ {{ (parseFloat(this.datosInternos.MO_CON_IMPUESTOS)).toFixed(2)  }}</td>
                     </tr>
                     
                   </tbody>
@@ -596,11 +599,11 @@
                       <td class="table-success" scope="row"><span class="font-weight-bold">Calculo de MO (sin margen)</span></td>
                     </tr>
                     <tr>
-                      <th class="table-success" scope="row">$ {{this.datosInternos.MO   }}</th>
+                      <th class="table-success" scope="row">$ {{ (parseFloat(this.datosInternos.MO)).toFixed(2)   }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-success" scope="row">$ {{ parseFloat(this.datosInternos.MO / variablesIndirectas.tipo_cambio)   }}</th>
+                      <th class="table-success" scope="row">$ {{ (parseFloat(this.datosInternos.MO / variablesIndirectas.tipo_cambio)).toFixed(2)   }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
@@ -613,11 +616,11 @@
                       <td class="table-info" scope="row"><span class="font-weight-bold">Calculo de MO (con margen)</span> </td>
                     </tr>
                     <tr>
-                      <th class="table-info" scope="row">$ {{ parseFloat(this.datosInternos.MO_CON_MARGEN)  }}</th>
+                      <th class="table-info" scope="row">$ {{ (parseFloat(this.datosInternos.MO_CON_MARGEN)).toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-info" scope="row">$ {{ parseFloat(this.datosInternos.MO_CON_MARGEN / variablesIndirectas.tipo_cambio )  }}</th>
+                      <th class="table-info" scope="row">$ {{ (parseFloat(this.datosInternos.MO_CON_MARGEN / variablesIndirectas.tipo_cambio )).toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
@@ -630,11 +633,11 @@
                       <td class="table-warning" scope="row"> <span class="font-weight-bold">Calculo de Cota Mayor</span> </td>
                     </tr>
                     <tr>
-                      <th class="table-warning" scope="row">$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN)   }}</th>
+                      <th class="table-warning" scope="row">$ {{ (parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_MXN)).toFixed(2)   }}</th>
                       <td><p class="font-weight-bold ">Costo MXN</p></td>
                     </tr>
                     <tr>
-                      <th class="table-warning" scope="row">$ {{ parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD)  }}</th>
+                      <th class="table-warning" scope="row">$ {{ (parseFloat(datosInternos.DETALLES_TOTAL_COTA_MAYOR_USD)).toFixed(2)  }}</th>
                       <td><p class="font-weight-bold ">Costo USD</p></td>
                     </tr>
                   </tbody>
