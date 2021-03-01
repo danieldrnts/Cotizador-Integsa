@@ -9,7 +9,7 @@
 <body style="min-height: 5000em;"  >
   <div id="app"   >
     <div  class="container-fluid">
-      <div @click="tester" class="btn btn-primary">Tester</div>
+      <div @click="tester" v-if="false" class="btn btn-primary">Tester</div>
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
@@ -110,7 +110,7 @@
                       <th scope="col">
                         ${{(parseFloat(variablesIndirectas.total_indirectos_usd)).toFixed(2)}}
                       </th>
-                      <th scope="col">${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS)).toFixed(2)  }}
+                      <th scope="col">{{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_INDIRECTOS)).toFixed(2)  }}
                       </th>
                       <th scope="col"> MO vs Indirectos</th>
                     </tr>
@@ -127,7 +127,7 @@
                       <td>{{datosInternos.ID}}</td>
                       <td>MANO DE OBRA</td>
                       <td>${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA)).toFixed(2)  }}</td>
-                      <td>${{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES)).toFixed(2)  }}</td>
+                      <td>{{ (parseFloat(datosInternos.COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES)).toFixed(2)  }}</td>
                       <td>MO vs Mat.</td>
                     </tr>
                     <tr>
@@ -250,7 +250,6 @@
                       :class="{'table-danger' : datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL < 25 }" scope="col">
                         <input @change="setMargenGlobal" style="width: 5em;"  
                           v-model="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
-                          value="datosInternos.COTIZACION_INTERNA_MARGEN_GLOBAL"
                           type="number"
                           >
                         <span class="font-weight-bold">%</span> </th>
@@ -435,7 +434,7 @@
                         <input  @change="flujoGeneral" v-model.number="datosInternos.CUANTOS_TECNICO" type="number" class="form-control" >
                       </td>
                       <td>
-                        $ {{ parseFloat(datosInternos.MES_UNI_TECNICO)  }} MXN
+                        $ {{ (parseFloat(datosInternos.MES_UNI_TECNICO)).toFixed(2)  }} MXN
                       </td>
                       <td>
                         $ {{ (parseFloat(datosInternos.DIARIO_UNI_TECNICO)).toFixed(2)   }}

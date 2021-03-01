@@ -120,7 +120,7 @@ var app = new Vue({
         COTIZACION_INTERNA_MANO_OBRA_VS_MATERIALES: 0,
         COTIZACION_INTERNA_PV_GLOBAL: 0,
         COTIZACION_INTERNA_COSTO_GLOBAL: `COTIZACION}`,
-        COTIZACION_INTERNA_MARGEN_GLOBAL: 37,
+        COTIZACION_INTERNA_MARGEN_GLOBAL: 37.0,
         DETALLES_TIEMPO_ENTREGA: `DETALLES_TIEMPO_ENTREGA}`,
         DETALLES_ATENCION: `DETALLES_ATENCION}`,
         DETALLES_LUGAR_ENTREGA: `DETALLES_LUGAR_ENTREGA}`,
@@ -691,6 +691,12 @@ var app = new Vue({
       ]);
       manoSheet.insertRow(20, [
         "",
+        "Mano de obra especializada",
+        vi.mano_obra,
+        // { formula: "SUM(D12:D19)", result: tot_ind },
+      ]);
+      manoSheet.insertRow(21, [
+        "",
         "",
         "",
         { formula: "SUM(D12:D19)", result: tot_ind },
@@ -717,9 +723,13 @@ var app = new Vue({
         vi.precioPartner / vi.tipo_cambio;
       manoSheet.insertRow(31, [
         "",
-        { formula: "I7+D20+C26/C24", result: MO_sin_margen },
+        parseFloat(this.datosInternos.MO).toFixed(2),
+        // { formula: "I7+D20+C26/C24", result: MO_sin_margen },
         "",
-        { formula: "B31/C24", result: MO_sin_margen / vi.tipo_cambio },
+        parseFloat(
+          this.datosInternos.MO / this.variablesIndirectas.tipo_cambio
+        ).toFixed(2),
+        // { formula: "B31/C24", result: MO_sin_margen / vi.tipo_cambio },
       ]);
 
       manoSheet.insertRow(32, [
@@ -734,15 +744,20 @@ var app = new Vue({
       ]);
       manoSheet.insertRow(33, [
         "",
-        {
-          formula: "B31*(1+C25)",
-          result: MO_sin_margen * (1 + vi.margen_a_aplicar),
-        },
+        parseFloat(this.datosInternos.MO_CON_MARGEN).toFixed(2),
+        // {
+        //   formula: "B31*(1+C25)",
+        //   result: MO_sin_margen * (1 + vi.margen_a_aplicar),
+        // },
         "",
-        {
-          formula: "B33/C24",
-          result: (MO_sin_margen * (1 + vi.margen_a_aplicar)) / vi.tipo_cambio,
-        },
+        parseFloat(
+          this.datosInternos.MO_CON_MARGEN /
+            this.variablesIndirectas.tipo_cambio
+        ).toFixed(2),
+        // {
+        //   formula: "B33/C24",
+        //   result: (MO_sin_margen * (1 + vi.margen_a_aplicar)) / vi.tipo_cambio,
+        // },
         "",
         "",
         "",
@@ -1363,8 +1378,8 @@ var app = new Vue({
 
       this.datosInternos.MO_CON_MARGEN =
         this.datosInternos.MO *
-          (1 + this.variablesIndirectas.margen_a_aplicar / 100) +
-        this.variablesIndirectas.precioPartner;
+        (1 + this.variablesIndirectas.margen_a_aplicar / 100);
+      // this.variablesIndirectas.precioPartner;
 
       this.datosInternos.MO_CON_MARGEN_MXN =
         this.datosInternos.MO *
