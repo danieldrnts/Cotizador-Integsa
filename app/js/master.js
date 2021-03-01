@@ -303,7 +303,7 @@ var app = new Vue({
       let finalRowIndex = 0;
       let pvGlobal = 0;
 
-      this.listaDeMateriales.forEach(function (item, index) {
+      this.listaDeMateriales.forEach((item, index) => {
         integsaSheet.insertRow(8 + index, [
           index + 1,
           item["cantidad_de_piezas"],
@@ -314,30 +314,55 @@ var app = new Vue({
           item["margen_individual"],
           item["pv_unitario"],
           item["pv_total"],
-          item["pv_sugerido"],
+          // item["pv_sugerido"],
+          item["pv_sugerido"] != NaN
+            ? item["pv_sugerido"]
+            : "No hay un precio sugerido.",
         ]);
         finalRowIndex = index;
         pvGlobal += item["pv_total"];
       });
       finalRowIndex += 8;
-      let cotTot = this.$data.datosInternos.COTIZACION_INTERNA_TOTAL;
-      integsaSheet.getCell(
-        "F" + (finalRowIndex + 1)
-      ).value = this.datosInternos.SUMA_IMPORTES_TOTALES;
+      let cotTot = this.$data.datosInternos.SUMA_COSTOS_TOTALES;
+      integsaSheet.getCell("F" + (finalRowIndex + 1)).value = {
+        formula: "=SUM(F8:F" + finalRowIndex + ")",
+        result: cotTot,
+      };
       integsaSheet.getCell("F" + (finalRowIndex + 2)).value = "Costo Global";
-      integsaSheet.getCell(
-        "I" + (finalRowIndex + 1)
-      ).value = this.datosInternos.SUMA_COSTOS_TOTALES;
+      integsaSheet.getCell("I" + (finalRowIndex + 1)).value = {
+        formula: "=SUM(I8:I" + finalRowIndex + ")",
+        result: pvGlobal,
+      };
       integsaSheet.getCell("I" + (finalRowIndex + 2)).value = "PV Global";
-      integsaSheet.getCell(
-        "I" + (finalRowIndex + 5)
-      ).value = this.datosInternos.COTIZACION_INTERNA_UTILIDAD;
+      integsaSheet.getCell("I" + (finalRowIndex + 5)).value = {
+        formula: "=I" + (finalRowIndex + 1) + "-F" + (finalRowIndex + 1),
+        result: pvGlobal - cotTot,
+      };
       integsaSheet.getCell("I" + (finalRowIndex + 6)).value = "Utilidad";
-      integsaSheet.getCell("I" + (finalRowIndex + 8)).value = parseFloat(
-        this.datosInternos.UTILIDAD_PORCENTAJE
-      ).toFixed(2);
+      integsaSheet.getCell("I" + (finalRowIndex + 8)).value = {
+        formula:
+          "=(I" + (finalRowIndex + 5) + "/I" + (finalRowIndex + 1) + ")*" + 100,
+        result: (pvGlobal - cotTot) / pvGlobal,
+      };
       integsaSheet.getCell("I" + (finalRowIndex + 9)).value =
         "PORCENTAJE UTILIDAD";
+      // integsaSheet.getCell(
+      //   "F" + (finalRowIndex + 1)
+      // ).value = this.datosInternos.SUMA_IMPORTES_TOTALES;
+      // integsaSheet.getCell("F" + (finalRowIndex + 2)).value = "Costo Global";
+      // integsaSheet.getCell(
+      //   "I" + (finalRowIndex + 1)
+      // ).value = this.datosInternos.SUMA_COSTOS_TOTALES;
+      // integsaSheet.getCell("I" + (finalRowIndex + 2)).value = "PV Global";
+      // integsaSheet.getCell(
+      //   "I" + (finalRowIndex + 5)
+      // ).value = this.datosInternos.COTIZACION_INTERNA_UTILIDAD;
+      // integsaSheet.getCell("I" + (finalRowIndex + 6)).value = "Utilidad";
+      // integsaSheet.getCell("I" + (finalRowIndex + 8)).value = parseFloat(
+      //   this.datosInternos.UTILIDAD_PORCENTAJE
+      // ).toFixed(2);
+      // integsaSheet.getCell("I" + (finalRowIndex + 9)).value =
+      //   "PORCENTAJE UTILIDAD";
 
       integsaSheet.insertRow(1, [
         "Indirectos",
@@ -466,7 +491,8 @@ var app = new Vue({
         "",
         "TIEMPO DE ENT.:",
         // "Ver Cond. Com.",
-        this.datosInternos.DETALLES_TIEMPO_ENTREGA,
+        // this.datosInternos.DETALLES_TIEMPO_ENTREGA,
+        this.DatosCotizador.Duraci_n_del_proyecto,
       ]);
       clientSheet.mergeCells("B10:D10");
 
@@ -530,8 +556,10 @@ var app = new Vue({
           // item["pv_total"],
         ]);
         finalRowIndex = index;
-        pvGlobal += item["pv_total"];
+        pvGlobal += item["importe"];
       });
+
+      // console.log("pvGlobal: " + pvGlobal);
 
       clientSheet.insertRow(18 + finalRowIndex, []);
       clientSheet.insertRow(22 + finalRowIndex, [
@@ -944,16 +972,16 @@ var app = new Vue({
               this.datosInternos.VARIABLE_INDIRECTA_TIPO_CAMBIO
             );
           }
-          this.variablesIndirectas.margen_a_aplicar = parseInt(
+          this.variablesIndirectas.margen_a_aplicar = parseFloat(
             this.datosInternos.VARIABLE_INDIRECTA_MARGEN_APLICAR
           );
-          this.variablesIndirectas.miscelaneosMonto = parseInt(
+          this.variablesIndirectas.miscelaneosMonto = parseFloat(
             this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_MONTO
           );
-          this.variablesIndirectas.miscelaneosPorcentaje = parseInt(
+          this.variablesIndirectas.miscelaneosPorcentaje = parseFloat(
             this.datosInternos.VARIABLE_INDIRECTA_MISCELANEOS_PORCENTAJE
           );
-          this.variablesIndirectas.precioPartner = parseInt(
+          this.variablesIndirectas.precioPartner = parseFloat(
             this.datosInternos.VARIABLE_INDIRECTA_COSTO_PARTNER
           );
 
@@ -1289,6 +1317,13 @@ var app = new Vue({
     // Flujo de calculo varibles
     // 1. Materiales
     flujoGeneral() {
+      if (this.variablesIndirectas.precioPartner != "") {
+        this.variablesIndirectas.precioPartner = parseFloat(
+          this.variablesIndirectas.precioPartner
+        );
+      } else {
+        this.variablesIndirectas.precioPartner = 0;
+      }
       // Lista de materiales
       let localCostoTotal = 0;
       this.listaDeMateriales.forEach((element) => {
@@ -1296,6 +1331,8 @@ var app = new Vue({
           element.descripcion == "INSTALACIÓN Y PUESTA EN OPERACIÓN" ||
           element.descripcion == "MISCELÁNEOS"
         ) {
+          element.pv_unitario = element.precio_lista;
+          element.pv_total = element.importe;
         } else {
           element.costo_total = element.cantidad_de_piezas * element.costo_u;
           element.precio_lista =
@@ -1374,7 +1411,7 @@ var app = new Vue({
       this.datosInternos.MO =
         parseInt(this.variablesIndirectas.total_indirectos) +
         this.datosInternos.MO_CON_IMPUESTOS +
-        parseInt(this.variablesIndirectas.precioPartner);
+        this.variablesIndirectas.precioPartner;
 
       this.datosInternos.MO_CON_MARGEN =
         this.datosInternos.MO *
@@ -1411,9 +1448,10 @@ var app = new Vue({
       this.listaDeMateriales.forEach((element) => {
         this.datosInternos.SUMA_COSTOS_TOTALES =
           this.datosInternos.SUMA_COSTOS_TOTALES +
-          parseInt(element.costo_total);
+          parseFloat(element.costo_total);
         this.datosInternos.SUMA_IMPORTES_TOTALES =
-          this.datosInternos.SUMA_IMPORTES_TOTALES + parseInt(element.importe);
+          this.datosInternos.SUMA_IMPORTES_TOTALES +
+          parseFloat(element.importe);
       });
 
       // Calcula utilidad
@@ -1499,8 +1537,14 @@ var app = new Vue({
     calculaCotaMayor() {
       let count = 0;
       this.listaDeMateriales.forEach((element) => {
-        if (element.costo_instalacion >= 0) {
-          count = count + parseFloat(element.costo_instalacion);
+        if (
+          element.descripcion == "INSTALACIÓN Y PUESTA EN OPERACIÓN" ||
+          element.descripcion == "MISCELÁNEOS"
+        ) {
+        } else {
+          if (element.costo_instalacion >= 0) {
+            count = count + parseFloat(element.costo_instalacion);
+          }
         }
       });
       // if()

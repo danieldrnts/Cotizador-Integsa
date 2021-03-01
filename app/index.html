@@ -9,7 +9,7 @@
 <body style="min-height: 5000em;"  >
   <div id="app"   >
     <div  class="container-fluid">
-      <div @click="tester" v-if="false" class="btn btn-primary">Tester</div>
+      <div @click="tester" v-if="true" class="btn btn-primary">Tester</div>
       <div v-if="showTable" class="row py-5">
         <div class="col-6">
           <!-- Modal -->
@@ -168,8 +168,9 @@
                       <td></td>
                       <td>Tiempo de entrega</td>
                       <td>
-                        <input type="text" v-model="datosInternos.DETALLES_TIEMPO_ENTREGA" :value="datosInternos.DETALLES_TIEMPO_ENTREGA" >
+                        <!-- <input type="text" v-model="datosInternos.DETALLES_TIEMPO_ENTREGA" :value="datosInternos.DETALLES_TIEMPO_ENTREGA" > -->
                         <!-- {{datosInternos.DETALLES_TIEMPO_ENTREGA}} -->
+                        {{DatosCotizador.Duraci_n_del_proyecto}}
                       </td>
                     </tr>
                     <tr>
@@ -360,16 +361,16 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="material in listaDeMateriales"  >
-                      <td>{{material.descripcion}}</td>
-                      <td   ><span v-if="material.costo_instalacion >= 0" >
+                    <tr v-for="(material, index) in listaDeMateriales" :key="index" >
+                      <td v-show="index < (listaDeMateriales.length - 2)" >{{material.descripcion}}</td>
+                      <td v-show="index < (listaDeMateriales.length - 2)" ><span v-if="material.costo_instalacion >= 0" >
                         $ {{(parseFloat(material.costo_instalacion)).toFixed(2)}}
                       </span>
                       <span v-else >
                         No existe este dato.
                       </span>
-                    </td>
-                      <td>{{material.unidad}}</td>
+                    </td >
+                      <td v-show="index < (listaDeMateriales.length - 2)" >{{material.unidad}}</td>
                     </tr>
                     <tr class="table-info" >
                       <td>Mano de Obra</td>
@@ -546,7 +547,7 @@
                       <form @submit.prevent="cargaJustificacionPartner"  >
                         <div class="form-group">
                           <label for="exampleInputEmail1">Ingrese Costo de Partner</label>
-                          <input @change="flujoGeneral" type="number" class="form-control" v-model="variablesIndirectas.precioPartner"  >
+                          <input @change="flujoGeneral" type="number"  class="form-control" v-model="variablesIndirectas.precioPartner"  >
                           <small id="emailHelp" class="form-text text-muted">El monto debe ingresarse en USD.</small>
                         </div>
                      
