@@ -5,6 +5,7 @@ var app = new Vue({
   data() {
     return {
       showTable: false,
+      esAdministrador: false,
       excelMensajeCotizacion: "Folio pendiente de aprobar en CRM",
       cargandoMateriales: false,
       errorParsing: false,
@@ -1555,49 +1556,63 @@ var app = new Vue({
         this.variablesIndirectas.tipo_cambio;
     },
 
-    // aprobarCotizacion() {
-    //   // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
-    //   //   .aprobada_por_SuperU;
+    aprobarCotizacion() {
+      if (this.esAdministrador) {
+        // this.DatosCotizador.aprobada_por_SuperU = !this.DatosCotizador
+        //   .aprobada_por_SuperU;
 
-    //   formData = {
-    //     data: {
-    //       fecha_aprobada: `${Date.now()}`,
-    //       aprobada_por_SuperU: "true",
-    //     },
-    //   };
+        // let fecha =
 
-    //   ZOHO.CREATOR.init().then((data) => {
-    //     var config = {
-    //       reportName: "Cotizador2_Report",
-    //       // Aqui el error es el id
-    //       id: `${this.DatosCotizador.ID}`,
-    //       data: formData,
-    //     };
+        formData = {
+          data: {
+            // fecha_aprobada: `${Date.now()}`,
+            aprobada_por_SuperU: "true",
+          },
+        };
 
-    //     //update record API
-    //     ZOHO.CREATOR.API.updateRecord(config).then((response) => {
-    //       //callback block
-    //       console.log(response);
-    //       if (response.code == 3000) {
-    //         alert("Guardado con exito.");
-    //         this.DatosCotizador.aprobada_por_SuperU = true;
-    //       } else {
-    //         alert("Ocurrió un error en servidor, intenta de nuevo");
-    //       }
-    //     });
-    //   });
-    // },
+        ZOHO.CREATOR.init().then((data) => {
+          var config = {
+            reportName: "Cotizador2_Report",
+            // Aqui el error es el id
+            id: `${this.DatosCotizador.ID}`,
+            data: formData,
+          };
+
+          //update record API
+          ZOHO.CREATOR.API.updateRecord(config).then((response) => {
+            //callback block
+            console.log(response);
+            if (response.code == 3000) {
+              alert("Guardado con exito.");
+              this.DatosCotizador.aprobada_por_SuperU = true;
+            } else {
+              alert("Ocurrió un error en servidor, intenta de nuevo");
+            }
+          });
+        });
+      } else {
+        alert("Solo un administrador puede aprobarla.");
+      }
+    },
   },
   mounted() {},
   created() {
     ZOHO.CREATOR.init().then((data) => {
       // 1. Obtengo los parametros de la pagina. Solo el id del cotizador.
       let queryParams = ZOHO.CREATOR.UTIL.getQueryParams();
+      console.log();
 
       if (queryParams.id_cotizador) {
         alert(
           "Cotización cargada, por favor da Click en 'Genera Tablas de Cotización' "
         );
+      }
+      if (
+        queryParams.tipo_usuario == "jgarcia.integsa.1" ||
+        queryParams.tipo_usuario == "akarim.integsa" ||
+        queryParams.tipo_usuario == "oxproxtech"
+      ) {
+        this.esAdministrador = true;
       }
     });
 
